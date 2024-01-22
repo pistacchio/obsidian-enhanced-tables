@@ -1,0 +1,10 @@
+{
+  "id": "advanced-table-controls",
+  "name": "Advanced table controls",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Add programmable controls to selected tables",
+  "author": "pistacchio",
+  "authorUrl": "https://github.com/pistacchio/advanced-table-controls",
+  "isDesktopOnly": false
+}

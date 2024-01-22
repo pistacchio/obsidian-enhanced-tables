@@ -1,0 +1,56 @@
+/*
+
+This CSS file will be included with your plugin, and
+available in the app when your plugin is enabled.
+
+If your plugin does not need CSS, delete this file.
+
+*/
+
+.advanced-table-controls-pagination {
+  display: flex;
+  justify-content: space-between;
+
+  & > div {
+    display: flex;
+  }
+
+  & button {
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+  }
+
+  & button:disabled {
+    opacity: 0.4;
+  }
+
+  & button.active {
+    color: var(--text-accent);
+  }
+
+  & .total {
+    font-size: var(--font-smallest);
+    padding-top: 1em;
+    margin-left: 0.3em;
+  }
+
+}
+
+.advanced-table-controls-controls {
+  display: flex;
+
+  & > div {
+    margin-right: 1em;
+  }
+
+  & label {
+    font-size: var(--font-smallest);
+    font-weight: var(--font-light);
+  }
+
+  & .sorting {
+    & select {
+      margin-right: 0.5em;
+    }
+  }
+}
