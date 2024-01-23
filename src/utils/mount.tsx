@@ -76,7 +76,7 @@ export function mountAdvancedTableControls(
   const rootElement = document.createElement('div');
   rootElement.setAttribute(ATC_RENDER_TABLE_ATTRIBUTE, 'true');
   tableEl.after(rootElement);
-  tableEl.style.display = 'none';
+  tableEl.className = 'advanced-table-controls-hidden';
 
   if (configuration['hide-configuration']) {
     yamlCodeEl.parentElement?.remove();
@@ -110,6 +110,8 @@ function extractYamlCodeFromTheCodeBlock(
 
     return yamlObj as AtcConfiguration;
   } catch (e) {
+    console.error('Cannot parse the yaml configuration');
+    console.error(e);
     return null;
   }
 }
@@ -176,8 +178,11 @@ function extractRawTableData(element: HTMLTableElement): RawTableData {
   );
 
   const rows = (element.findAll('tbody > tr') ?? []).map(
-    (row: HTMLTableRowElement) =>
-      row.findAll('td').map((cell: HTMLTableCellElement) => cell.innerHTML),
+    (row: HTMLTableRowElement) => {
+      return row
+        .findAll('td')
+        .map((cell: HTMLTableCellElement) => cell.innerHTML);
+    },
   );
 
   return { columns, rows };

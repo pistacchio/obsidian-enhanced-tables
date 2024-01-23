@@ -22,6 +22,7 @@ export type AtcConfigurationColumn = {
   formatter?: string;
   enum?: Record<string, string>;
   hidden?: boolean;
+  nowrap?: boolean;
 };
 
 export type AtcConfiguration = {

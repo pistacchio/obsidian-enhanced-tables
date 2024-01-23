@@ -1,15 +1,15 @@
 import React from 'react';
 import { AtcConfiguration, AtcDataCell, RawTableData } from 'src/utils/types';
-import { useAdvancedTableControlsState } from 'src/AdvancedTableControls/useAdvancedTableControlState';
+import { useAdvancedTableControlsState } from 'src/AdvancedTableControls/useAdvancedTableControlsState';
 import { PaginationView } from 'src/components/PaginationView';
 import { ControlsView } from 'src/components/Controls';
 
-type AdvancedTableControlProps = {
+type AdvancedTableControlsProps = {
   configuration: AtcConfiguration;
   tableData: RawTableData;
 };
 
-export const AdvancedTableControls: React.FC<AdvancedTableControlProps> = ({
+export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
   configuration,
   tableData,
 }) => {
@@ -59,6 +59,11 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlProps> = ({
                 .filter((c: AtcDataCell) => !c.column.hidden)
                 .map((c: AtcDataCell, idx2: number) => (
                   <td
+                    className={
+                      c.column.nowrap
+                        ? 'advanced-table-controls-nowrap'
+                        : undefined
+                    }
                     key={idx2}
                     dangerouslySetInnerHTML={{ __html: c.formattedValue }}
                   />

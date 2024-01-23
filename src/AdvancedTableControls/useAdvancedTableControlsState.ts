@@ -56,8 +56,6 @@ export function useAdvancedTableControlsState(
     return null;
   });
 
-  console.log(sorting);
-
   const [totalNumberOfUnpaginatedRows, setTotalNumberOfUnpaginatedRows] =
     useState<number>(tableData.rows.length);
 

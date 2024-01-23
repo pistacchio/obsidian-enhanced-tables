@@ -1,6 +1,6 @@
 {
   "bracketSpacing": true,
-  "jsxBracketSameLine": false,
+  "bracketSameLine": false,
   "printWidth": 80,
   "plugins": [],
   "semi": true,
@@ -15,7 +15,5 @@
         "printWidth": 200
       }
     }
-  ],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  ]
 }

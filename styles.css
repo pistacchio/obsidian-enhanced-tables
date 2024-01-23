@@ -33,7 +33,6 @@ If your plugin does not need CSS, delete this file.
     padding-top: 1em;
     margin-left: 0.3em;
   }
-
 }
 
 .advanced-table-controls-controls {
@@ -53,4 +52,12 @@ If your plugin does not need CSS, delete this file.
       margin-right: 0.5em;
     }
   }
+}
+
+.advanced-table-controls-nowrap {
+  white-space: nowrap !important;
+}
+
+.advanced-table-controls-hidden {
+  display: none;
 }

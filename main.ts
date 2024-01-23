@@ -1,17 +1,8 @@
 import { Plugin } from 'obsidian';
-import {
-  AdvancedTableControlsPluginSettings,
-  DEFAULT_SETTINGS,
-  SettingTab,
-} from 'SettingsTab';
 import { getMountContext, mountAdvancedTableControls } from 'src/utils/mount';
 
 export default class AdvancedTableControlsPlugin extends Plugin {
-  settings: AdvancedTableControlsPluginSettings;
-
   async onload() {
-    await this.loadSettings();
-
     this.registerMarkdownPostProcessor(async (el, ctx) => {
       const possibleMountContext = await getMountContext(el, ctx);
 
@@ -19,26 +10,15 @@ export default class AdvancedTableControlsPlugin extends Plugin {
         const [yamlCodeEl, configuration, tableEl, tableData] =
           possibleMountContext;
 
-        mountAdvancedTableControls(
-          yamlCodeEl,
-          configuration,
-          tableEl,
-          tableData,
-        );
+        setTimeout(() => {
+          mountAdvancedTableControls(
+            yamlCodeEl,
+            configuration,
+            tableEl,
+            tableData,
+          );
+        }, 300);
       }
-    });
-
-    // This adds a settings tab so the user can configure various aspects of the plugin
-    this.addSettingTab(new SettingTab(this.app, this));
-  }
-
-  onunload() {}
-
-  async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-  }
-
-  async saveSettings() {
-    await this.saveData(this.settings);
+    }, 1);
   }
 }
