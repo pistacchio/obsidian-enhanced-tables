@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AtcConfiguration, AtcDataCell, RawTableData } from 'src/utils/types';
 import { useAdvancedTableControlsState } from 'src/AdvancedTableControls/useAdvancedTableControlsState';
 import { PaginationView } from 'src/components/PaginationView';
 import { ControlsView } from 'src/components/Controls';
+import { instanceOf } from 'prop-types';
 
 type AdvancedTableControlsProps = {
   configuration: AtcConfiguration;
@@ -13,6 +14,8 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
   configuration,
   tableData,
 }) => {
+  const tbodyRef = useRef<HTMLTableSectionElement>(null);
+
   const {
     indexedColumns,
     rows,
@@ -27,6 +30,42 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
     sorting,
     setSorting,
   } = useAdvancedTableControlsState(configuration, tableData);
+
+  // Escape from React logic in order to be abel to use `HTMLElement.appendChild()` and
+  // hence handle advanced formatters that return HTML elements
+  useEffect(() => {
+    if (!tbodyRef.current) {
+      return;
+    }
+
+    rows.filter((row, idx) => {
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-atc-row', idx.toString());
+
+      row.orderedCells
+        .filter((c) => !c.column.hidden)
+        .forEach((cell, idx2) => {
+          const td = document.createElement('td');
+          tr.setAttribute('data-atc-cell', idx2.toString());
+          tr.setAttribute('data-atc-row-cell', `${idx}-${idx2}`);
+
+          if (cell.column.nowrap) {
+            td.className = 'advanced-table-controls-nowrap';
+          }
+
+          // If the formatter function returns a HTML element, use it as-is
+          try {
+            td.appendChild(cell.formattedValue);
+          } catch (e) {
+            td.innerHTML = cell.formattedValue;
+          }
+
+          tr.appendChild(td);
+        });
+
+      tbodyRef.current!.appendChild(tr);
+    });
+  }, [rows]);
 
   return (
     <div className="advanced-table-controls">
@@ -59,27 +98,7 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
             </tr>
           </thead>
 
-          <tbody>
-            {rows.map((r, idx) => (
-              <tr key={idx} data-atc-row={idx}>
-                {r.orderedCells
-                  .filter((c: AtcDataCell) => !c.column.hidden)
-                  .map((c: AtcDataCell, idx2: number) => (
-                    <td
-                      key={idx2}
-                      data-atc-cell={idx2}
-                      data-atc-row-cell={`${idx}-${idx2}`}
-                      className={
-                        c.column.nowrap
-                          ? 'advanced-table-controls-nowrap'
-                          : undefined
-                      }
-                      dangerouslySetInnerHTML={{ __html: c.formattedValue }}
-                    />
-                  ))}
-              </tr>
-            ))}
-          </tbody>
+          <tbody ref={tbodyRef}></tbody>
         </table>
       </div>
 

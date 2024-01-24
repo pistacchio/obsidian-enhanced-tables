@@ -109,7 +109,6 @@ export function useAdvancedTableControlsState(
           column: indexedColumns[index],
           rawValue: cellContent,
           value,
-          // formattedValue: indexedColumns[index].formatter(value),
         } as AtcDataCell;
       });
 

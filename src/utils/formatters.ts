@@ -8,8 +8,9 @@ export function makeFormatterForColumn(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return ($cell, $row) => {
       try {
-        return eval(`\`${formatter}\``);
+        return eval(formatter);
       } catch (e) {
+        console.log(e);
         return $cell;
       }
     };

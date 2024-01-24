@@ -19,15 +19,16 @@
     "sourceType": "module"
   },
   "rules": {
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-inferrable-types": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "no-prototype-builtins": "off",
     "no-unused-vars": "off",
     "react-hooks/exhaustive-deps": "warn",
-    "@typescript-eslint/no-unused-vars": "warn",
-    "@typescript-eslint/ban-ts-comment": "off",
-    "no-prototype-builtins": "off",
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-non-null-assertion": "off",
-    "react/no-unescaped-entities": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "react/no-unescaped-entities": "off"
   },
   "settings": {
     "react": {
