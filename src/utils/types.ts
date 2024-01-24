@@ -3,7 +3,7 @@ export type RawTableData = {
   rows: string[][];
 };
 
-export type CellValueFormatter = (cell: any, row: any) => any;
+export type CellValueFormatter = (cell: any, row: any, ctx: any) => any;
 
 // Configuration
 

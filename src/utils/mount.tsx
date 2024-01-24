@@ -1,4 +1,4 @@
-import { MarkdownPostProcessorContext, parseYaml } from 'obsidian';
+import { App, MarkdownPostProcessorContext, parseYaml } from 'obsidian';
 import {
   ATC_RENDER_TABLE_ATTRIBUTE,
   ATC_YAML_SIGNAL,
@@ -64,6 +64,7 @@ export async function getMountContext(
 }
 
 export function mountAdvancedTableControls(
+  app: App,
   yamlCodeEl: HTMLElement,
   configuration: AtcConfiguration,
   tableEl: HTMLTableElement,
@@ -84,6 +85,7 @@ export function mountAdvancedTableControls(
 
   createRoot(rootElement).render(
     <AdvancedTableControls
+      app={app}
       configuration={configuration}
       tableData={tableData}
     />,

@@ -1,16 +1,18 @@
 import React, { useEffect, useRef } from 'react';
-import { AtcConfiguration, AtcDataCell, RawTableData } from 'src/utils/types';
+import { AtcConfiguration, RawTableData } from 'src/utils/types';
 import { useAdvancedTableControlsState } from 'src/AdvancedTableControls/useAdvancedTableControlsState';
 import { PaginationView } from 'src/components/PaginationView';
 import { ControlsView } from 'src/components/Controls';
-import { instanceOf } from 'prop-types';
+import { App } from 'obsidian';
 
 type AdvancedTableControlsProps = {
+  app: App;
   configuration: AtcConfiguration;
   tableData: RawTableData;
 };
 
 export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
+  app,
   configuration,
   tableData,
 }) => {
@@ -29,7 +31,7 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
 
     sorting,
     setSorting,
-  } = useAdvancedTableControlsState(configuration, tableData);
+  } = useAdvancedTableControlsState(app, configuration, tableData);
 
   // Escape from React logic in order to be abel to use `HTMLElement.appendChild()` and
   // hence handle advanced formatters that return HTML elements

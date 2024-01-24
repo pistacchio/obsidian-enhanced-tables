@@ -1,6 +1,6 @@
 import { Plugin } from 'obsidian';
 import { getMountContext, mountAdvancedTableControls } from 'src/utils/mount';
-import {TableManager} from "src/TableManager";
+import { TableManager } from 'src/TableManager';
 
 export default class AdvancedTableControlsPlugin extends Plugin {
   public tableManager = new TableManager();
@@ -9,13 +9,13 @@ export default class AdvancedTableControlsPlugin extends Plugin {
     this.registerMarkdownPostProcessor(async (el, ctx) => {
       const possibleMountContext = await getMountContext(el, ctx);
 
-
       if (possibleMountContext) {
         const [yamlCodeEl, configuration, tableEl, tableData] =
           possibleMountContext;
 
         setTimeout(() => {
           mountAdvancedTableControls(
+            this.app,
             yamlCodeEl,
             configuration,
             tableEl,
@@ -25,5 +25,4 @@ export default class AdvancedTableControlsPlugin extends Plugin {
       }
     }, 1);
   }
-
 }

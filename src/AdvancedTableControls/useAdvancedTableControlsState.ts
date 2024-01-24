@@ -24,8 +24,10 @@ import { extractValue } from 'src/utils/values';
 import { getSortingFunction } from 'src/utils/sorting';
 
 import { PaginationOptions } from 'src/components/PaginationView';
+import { App } from 'obsidian';
 
 export function useAdvancedTableControlsState(
+  app: App,
   configuration: AtcConfiguration,
   tableData: RawTableData,
 ) {
@@ -118,7 +120,9 @@ export function useAdvancedTableControlsState(
 
       orderedCells = orderedCells.map((c, idx) => ({
         ...c,
-        formattedValue: indexedColumns[idx].formatter(c.value, allCells),
+        formattedValue: indexedColumns[idx].formatter(c.value, allCells, {
+          app,
+        }),
       }));
 
       return {

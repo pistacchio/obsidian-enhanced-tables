@@ -1,4 +1,5 @@
 import { AtcDataColumn, CellValueFormatter } from 'src/utils/types';
+import { App } from 'obsidian';
 
 export function makeFormatterForColumn(
   column: AtcDataColumn,
@@ -6,11 +7,10 @@ export function makeFormatterForColumn(
 ): CellValueFormatter {
   if (formatter) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return ($cell, $row) => {
+    return ($cell, $row, $ctx) => {
       try {
         return eval(formatter);
       } catch (e) {
-        console.log(e);
         return $cell;
       }
     };
