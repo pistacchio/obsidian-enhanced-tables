@@ -7,6 +7,13 @@ If your plugin does not need CSS, delete this file.
 
 */
 
+.advanced-table-controls {
+& .table-container {
+    width: 100%;
+    overflow-x: scroll;
+  }
+}
+
 .advanced-table-controls-pagination {
   display: flex;
   justify-content: space-between;
@@ -53,6 +60,23 @@ If your plugin does not need CSS, delete this file.
     }
   }
 }
+
+@media (max-width: 700px) {
+  .advanced-table-controls-controls {
+    flex-direction: column;
+  }
+
+  .advanced-table-controls-pagination {
+    & .pag-nav-dots,
+    .pag-nav-page,
+    .pag-nav-dots,
+    select {
+      display: none;
+    }
+
+  }
+}
+
 
 .advanced-table-controls-nowrap {
   white-space: nowrap !important;

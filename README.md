@@ -134,3 +134,50 @@ All the column configuration properties are optional.
 |--------------|----------|---------------------------------------------------------------------------------|
 | `page-size`  | `number` | Mandatory. How many items to display per page.                                  |
 | `page-sizes` | `array`  | Array of numbers defining the selectable page sizes. Defaults are: 25, 50, 100. |
+
+## Advanced use
+
+### TableManager Api
+
+The **Advanced table controls** plugin exposes a utility Api to work with markdown tables within a file. You can use it to program advanced integrations with custom tables, like buttons that change the table within a file.
+
+All the functions of the Api assume that the target files only has one table and / or they work on the first table instance found (if any).
+
+A `Tablemanager` instance is exposed by the plugin and can be programmatically accessed via `app.plugins.plugin['advanced-table-controls'].tableManager`;
+
+#### `Tablemanager`
+
+Each row of the table is represented by an array of `string`s, each being the content of a cell.
+
+```typescript 
+  type LineValues = string[];
+```
+
+The class exposes the following methods:
+
+```typescript
+// In all the following methods:
+//   `lineNo` = 0 = first data line
+//   `lineNo` = n = nth line
+//   `lineNo` = -1 = last line
+
+// Insert the new table line represented by `values` into the provided `vault`'s `file` at position `lineNo`.
+async function insertLineToFile(file: TFile, vault: Vault, lineNo: number, values: LineValues): Promise<void> {}
+
+// Replace the table line at position `lineNo` in the provided `vault`'s `file` with
+//   a new table line represented by `values` 
+async function modifyLineInFile(file: TFile, vault: Vault, lineNo: number, values: LineValues): Promise<void> {}
+
+// Replace the header of the table in the provided `vault`'s `file` with
+//   a new table header represented by `values`
+async function modifyHeaderInFile(file: TFile, vault: Vault, values: LineValues): Promise<void> {}
+
+// Delete the table line at position `lineNo` in the provided `vault`'s `file` with
+async function removeLineFromFile(file: TFile, vault: Vault, lineNo: number): Promise<void> {}
+
+// Returns the values of the table line at position `lineNo` in the provided `vault`'s `file` with
+async function readLineFromFile(file: TFile, vault: Vault, lineNo: number): Promise<LineValues | null> {}
+
+// Returns all the values of the table in the provided `vault`'s `file` with
+async function readTableLinesFromFile(file: TFile, vault: Vault): Promise<LineValues[] | null> {}
+```

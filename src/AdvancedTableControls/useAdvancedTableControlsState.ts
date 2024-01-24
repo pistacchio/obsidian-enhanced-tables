@@ -128,8 +128,6 @@ export function useAdvancedTableControlsState(
       } as AtcDataRow;
     });
 
-    setTotalNumberOfUnpaginatedRows(rows.length);
-
     // Sorting
     if (sorting) {
       const sortFn = getSortingFunction(sorting, indexedColumns);
@@ -148,6 +146,8 @@ export function useAdvancedTableControlsState(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       rows = rows.filter(($row) => eval(filtering));
     }
+
+    setTotalNumberOfUnpaginatedRows(rows.length);
 
     // Pagination
     if (pagination) {

@@ -29,7 +29,7 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
   } = useAdvancedTableControlsState(configuration, tableData);
 
   return (
-    <div>
+    <div className="advanced-table-controls">
       {!configuration['hide-controls'] && (
         <ControlsView
           configuration={configuration}
@@ -41,37 +41,47 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
         />
       )}
 
-      <table>
-        <thead>
-          <tr>
-            {indexedColumns
-              .filter((c) => !c.hidden)
-              .map((c, idx) => (
-                <th key={idx} dangerouslySetInnerHTML={{ __html: c.name }} />
-              ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {rows.map((r, idx) => (
-            <tr key={idx}>
-              {r.orderedCells
-                .filter((c: AtcDataCell) => !c.column.hidden)
-                .map((c: AtcDataCell, idx2: number) => (
-                  <td
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              {indexedColumns
+                .filter((c) => !c.hidden)
+                .map((c, idx) => (
+                  <th
+                    key={idx}
                     className={
-                      c.column.nowrap
-                        ? 'advanced-table-controls-nowrap'
-                        : undefined
+                      c.nowrap ? 'advanced-table-controls-nowrap' : undefined
                     }
-                    key={idx2}
-                    dangerouslySetInnerHTML={{ __html: c.formattedValue }}
+                    dangerouslySetInnerHTML={{ __html: c.name }}
                   />
                 ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {rows.map((r, idx) => (
+              <tr key={idx} data-atc-row={idx}>
+                {r.orderedCells
+                  .filter((c: AtcDataCell) => !c.column.hidden)
+                  .map((c: AtcDataCell, idx2: number) => (
+                    <td
+                      key={idx2}
+                      data-atc-cell={idx2}
+                      data-atc-row-cell={`${idx}-${idx2}`}
+                      className={
+                        c.column.nowrap
+                          ? 'advanced-table-controls-nowrap'
+                          : undefined
+                      }
+                      dangerouslySetInnerHTML={{ __html: c.formattedValue }}
+                    />
+                  ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {pagination && (
         <PaginationView

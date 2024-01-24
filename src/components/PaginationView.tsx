@@ -109,11 +109,16 @@ export const PaginationView: React.FC<PaginationViewProps> = ({
         <div className="d-flex flex-wrap py-2 mr-3 ">
           {totalNumberOfItems > pageSize && (
             <Fragment>
-              <button disabled={pageNumber === 1} onClick={() => changePage(1)}>
+              <button
+                disabled={pageNumber === 1}
+                onClick={() => changePage(1)}
+                className="pag-nav-first"
+              >
                 &lt;&lt;
               </button>
 
               <button
+                className="pag-nav-prev"
                 disabled={pageNumber === 1}
                 onClick={() => changePage(pageNumber - 1)}
               >
@@ -121,14 +126,18 @@ export const PaginationView: React.FC<PaginationViewProps> = ({
               </button>
 
               {pages[0] !== 1 && (
-                <button disabled style={{ backgroundColor: 'transparent' }}>
+                <button
+                  disabled
+                  style={{ backgroundColor: 'transparent' }}
+                  className="pag-nav-dots"
+                >
                   ...
                 </button>
               )}
 
               {pages.map((page) => (
                 <button
-                  className={page === pageNumber ? 'active' : undefined}
+                  className={`${page === pageNumber ? 'active' : undefined} pag-nav-page`}
                   key={page}
                   onClick={() => changePage(page)}
                 >
@@ -138,6 +147,7 @@ export const PaginationView: React.FC<PaginationViewProps> = ({
 
               {pages[pages.length - 1] !== totalNumberOfPages && (
                 <button
+                  className="pag-nav-dots"
                   disabled
                   style={{ backgroundColor: 'transparent', color: '#7e8299' }}
                 >
@@ -146,6 +156,7 @@ export const PaginationView: React.FC<PaginationViewProps> = ({
               )}
 
               <button
+                className="pag-nav-next"
                 disabled={pageNumber === totalNumberOfPages}
                 onClick={() => changePage(pageNumber + 1)}
               >
@@ -153,6 +164,7 @@ export const PaginationView: React.FC<PaginationViewProps> = ({
               </button>
 
               <button
+                className="pag-nav-last"
                 disabled={pageNumber === totalNumberOfPages}
                 onClick={() => changePage(totalNumberOfPages)}
               >
