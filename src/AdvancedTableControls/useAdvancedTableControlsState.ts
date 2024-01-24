@@ -99,7 +99,7 @@ export function useAdvancedTableControlsState(
   const rows = useMemo<AtcDataRow[]>(() => {
     const dateFormat = configuration['date-format'] ?? DEFAULT_DATE_FORMAT;
 
-    let rows: AtcDataRow[] = tableData.rows.map((cells) => {
+    let rows: AtcDataRow[] = tableData.rows.map((cells, index) => {
       let orderedCells: AtcDataCell[] = cells.map((cellContent, index) => {
         const value = extractValue(
           cellContent,
@@ -126,6 +126,7 @@ export function useAdvancedTableControlsState(
       }));
 
       return {
+        index,
         orderedCells,
         ...allCells,
       } as AtcDataRow;
@@ -162,12 +163,13 @@ export function useAdvancedTableControlsState(
 
     return rows;
   }, [
-    filtering,
-    indexedColumns,
-    pagination,
-    sorting,
-    tableData,
     configuration,
+    tableData,
+    sorting,
+    filtering,
+    pagination,
+    indexedColumns,
+    app,
   ]);
 
   return {

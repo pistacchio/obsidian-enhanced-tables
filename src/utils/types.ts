@@ -64,6 +64,7 @@ export type AtcDataCell = {
 };
 
 export type AtcDataRow = {
+  index: number;
   el: HTMLTableRowElement;
   cells: Record<string, AtcDataCell>;
   orderedCells: AtcDataCell[];

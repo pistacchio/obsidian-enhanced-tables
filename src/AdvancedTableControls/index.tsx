@@ -40,16 +40,16 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
       return;
     }
 
-    rows.filter((row, idx) => {
+    rows.filter((row) => {
       const tr = document.createElement('tr');
-      tr.setAttribute('data-atc-row', idx.toString());
+      tr.setAttribute('data-atc-row', row.index.toString());
 
       row.orderedCells
         .filter((c) => !c.column.hidden)
         .forEach((cell, idx2) => {
           const td = document.createElement('td');
           tr.setAttribute('data-atc-cell', idx2.toString());
-          tr.setAttribute('data-atc-row-cell', `${idx}-${idx2}`);
+          tr.setAttribute('data-atc-row-cell', `${row.index}-${idx2}`);
 
           if (cell.column.nowrap) {
             td.className = 'advanced-table-controls-nowrap';
