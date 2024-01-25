@@ -19,6 +19,7 @@ export function getSortingFunction(
 
   switch (column.type) {
     case 'number':
+    case 'bool':
       if (desc) {
         return (a, b) => (b ?? 0) - (a ?? 0);
       }
@@ -26,6 +27,7 @@ export function getSortingFunction(
       return (a, b) => (a ?? 0) - (b ?? 0);
       break;
     case 'date':
+    case 'datetime':
       if (desc) {
         return (a, b) => {
           if (!a && !b) {

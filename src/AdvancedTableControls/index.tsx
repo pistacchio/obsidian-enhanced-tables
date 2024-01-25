@@ -40,7 +40,9 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
       return;
     }
 
-    rows.filter((row) => {
+    tbodyRef.current!.innerHTML = '';
+
+    rows.forEach((row) => {
       const tr = document.createElement('tr');
       tr.setAttribute('data-atc-row', row.index.toString());
 

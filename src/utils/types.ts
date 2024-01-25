@@ -7,11 +7,34 @@ export type CellValueFormatter = (cell: any, row: any, ctx: any) => any;
 
 // Configuration
 
-export type AtcConfigurationColumnType = 'string' | 'number' | 'date' | 'enum';
+export type AtcConfigurationColumnType =
+  | 'string'
+  | 'number'
+  | 'bool'
+  | 'date'
+  | 'datetime'
+  | 'enum';
 
 export type AtcConfigurationPagination = {
   'page-size': number;
   'page-sizes'?: number[];
+};
+
+export type AtcConfigurationBoolean = {
+  'yes-format'?: string;
+  'no-format'?: string;
+};
+
+export type AtcConfiguration = {
+  columns?: Record<string, AtcConfigurationColumn>;
+  'date-format'?: string;
+  'bool-format'?: string;
+  filter?: string;
+  filters?: Record<string, string>;
+  sort?: string;
+  pagination?: AtcConfigurationPagination;
+  'hide-controls': boolean;
+  'hide-configuration': boolean;
 };
 
 export type AtcConfigurationColumn = {
@@ -21,19 +44,9 @@ export type AtcConfigurationColumn = {
   'number-format'?: string;
   formatter?: string;
   enum?: Record<string, string>;
+  bool?: AtcConfigurationBoolean;
   hidden?: boolean;
   nowrap?: boolean;
-};
-
-export type AtcConfiguration = {
-  columns?: Record<string, AtcConfigurationColumn>;
-  'date-format'?: string;
-  filter?: string;
-  filters?: Record<string, string>;
-  sort?: string;
-  pagination?: AtcConfigurationPagination;
-  'hide-controls': boolean;
-  'hide-configuration': boolean;
 };
 
 // Data
@@ -45,12 +58,14 @@ export type Pagination = {
 
 export type AtcDataColumn = Omit<
   AtcConfigurationColumn,
-  'date-format' | 'number-format' | 'formatter'
+  'date-format' | 'bool' | 'bool-format' | 'number-format' | 'formatter'
 > & {
   name: string;
   index: number;
   dateFormat: string;
   numberFormat: Record<string, any>;
+  yesFormat: string;
+  notFormat: string;
   formatter: CellValueFormatter;
   el: HTMLTableCellElement;
 };

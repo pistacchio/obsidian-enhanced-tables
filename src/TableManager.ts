@@ -1,5 +1,3 @@
-import { TFile, Vault } from 'obsidian';
-
 const SUB_HEADER_LINE_REGEX = /^\|\s*-[-\s|]*?-\s*\|$/gm;
 const LINE_REGEX = /^\|.*?\|$/gm;
 
@@ -87,7 +85,7 @@ export class TableManager {
   public insertLine(
     fileContent: string,
     lineNo: number,
-    values: string[],
+    values: LineValues,
   ): string {
     const tableDocument = new TableDocument(fileContent);
 
@@ -109,7 +107,7 @@ export class TableManager {
   public modifyLine(
     fileContent: string,
     lineNo: number,
-    values: string[],
+    values: LineValues,
   ): string {
     const tableDocument = new TableDocument(fileContent);
 
@@ -132,7 +130,7 @@ export class TableManager {
     return tableDocument.toString();
   }
 
-  public modifyHeader(fileContent: string, values: string[]): string {
+  public modifyHeader(fileContent: string, values: LineValues): string {
     return this.modifyLine(fileContent, -2, values);
   }
 
@@ -154,7 +152,7 @@ export class TableManager {
     return tableDocument.toString();
   }
 
-  public readLine(fileContent: string, lineNo: number): string[] | null {
+  public readLine(fileContent: string, lineNo: number): LineValues | null {
     const tableDocument = new TableDocument(fileContent);
 
     if (!tableDocument.foundTable) {
@@ -176,7 +174,7 @@ export class TableManager {
     return null;
   }
 
-  public readTableLines(fileContent: string): string[][] | null {
+  public readTableLines(fileContent: string): LineValues[] | null {
     const tableDocument = new TableDocument(fileContent);
 
     if (!tableDocument.foundTable) {
@@ -184,65 +182,6 @@ export class TableManager {
     }
 
     return tableDocument.tableLines.map((l) => this.lineToValues(l));
-  }
-
-  public async insertLineToFile(
-    file: TFile,
-    vault: Vault,
-    lineNo: number,
-    values: LineValues,
-  ): Promise<void> {
-    const fileContent = await vault.read(file);
-    const modifiedFileContent = this.insertLine(fileContent, lineNo, values);
-    await vault.modify(file, modifiedFileContent);
-  }
-
-  public async modifyLineInFile(
-    file: TFile,
-    vault: Vault,
-    lineNo: number,
-    values: LineValues,
-  ): Promise<void> {
-    const fileContent = await vault.read(file);
-    const modifiedFileContent = this.modifyLine(fileContent, lineNo, values);
-    await vault.modify(file, modifiedFileContent);
-  }
-
-  public async modifyHeaderInFile(
-    file: TFile,
-    vault: Vault,
-    values: LineValues,
-  ): Promise<void> {
-    const fileContent = await vault.read(file);
-    const modifiedFileContent = this.modifyHeader(fileContent, values);
-    await vault.modify(file, modifiedFileContent);
-  }
-
-  public async removeLineFromFile(
-    file: TFile,
-    vault: Vault,
-    lineNo: number,
-  ): Promise<void> {
-    const fileContent = await vault.read(file);
-    const modifiedFileContent = this.removeLine(fileContent, lineNo);
-    await vault.modify(file, modifiedFileContent);
-  }
-
-  public async readLineFromFile(
-    file: TFile,
-    vault: Vault,
-    lineNo: number,
-  ): Promise<LineValues | null> {
-    const fileContent = await vault.read(file);
-    return this.readLine(fileContent, lineNo);
-  }
-
-  public async readTableLinesFromFile(
-    file: TFile,
-    vault: Vault,
-  ): Promise<LineValues[] | null> {
-    const fileContent = await vault.read(file);
-    return this.readTableLines(fileContent);
   }
 
   private valuesToLine(values: LineValues): string {

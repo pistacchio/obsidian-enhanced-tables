@@ -42,6 +42,7 @@ If you want to add some advanced control or formatting to any standard Obsidian 
 ```yaml atc
 
 # date-format: DD-MM-YYYY
+
 columns:
   Number column:
     alias: numberColumn
@@ -105,6 +106,7 @@ All the configuration properties are optional.
 | Property             | Type      | Description                                                                                                                                                                                                                                                                                                                                                                                  |
 |----------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `date-format`        | `string`  | Must be a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br> This property defines the _input_ format for all columns of type `date`, eg how **ATC** expects you to write them.<br> The default is `DD-MM-YYYY`.                                                                                                                                              |
+| `bool-format`        | `string`  | The string that specifies, table-wide, how a boolean `true` value is represented in columns of type `bool`. The default is `"1"`                                                                                                                                                                                                                                                              |
 | `columns`            | `object`  | An object with the configurations for the table columns. Each column is optional: you don't have to configure a column if you don't need any advanced feature for it. The name of column must match the one on the first row of the table (its header).<br> Each column configuration is an object: see [Column configuration properties](#column-configuration-properties) for the details. |
 | `filter`             | `string`  | Default filter for the table. Write it like a Javascript expression that has access to the `$row` variable.<br>Example: <ul><li>`$row.rating > 3`</li><li>`$row.status === 'active'`</li></ul>                                                                                                                                                                                               |
 | `filters`            | `object`  | Additional filters. The keys of the object will populate the filter selection dropdown. The value of each key is a Javascript expression that has access to the `$row` variable - see `filter` above.                                                                                                                                                                                        |
@@ -120,13 +122,14 @@ All the column configuration properties are optional.
 | Property        | Type      | Description                                                                                                                                                                                                                                                                                                                                                                                                                            |
 |-----------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `alias`         | `string`  | Sometimes column names can be long and not convienient to bse used in filters and formatter. You can specify an alias string for the column. If you do so, you _must_ use it in filters and formatters.                                                                                                                                                                                                                                |
-| `type`          | `string`  | Type of the column values. The possible values are: `string` \| `number` \| `date` \| `enum`. The default is `string`.<br> The display format of a column of type `number` can be specified by the property `number-format`.<br> The display format of a column of type `date` can be specified by the property `date-format`. <br> The display format of a column of type `enum` can be specified by the property `enum`.             |
+| `type`          | `string`  | Type of the column values. The possible values are: `string` \                                                                                                                                                                                                                                                                                                                                                                         | `number` \| `date` \| `datetime` \| `enum` \| `bool`. The default is `string`.<br> The display format of a column of type `number` can be specified by the property `number-format`.<br> The display format of a column of type `date` or `datetime` can be specified by the property `date-format`. <br> The display format of a column of type `enum` can be specified by the property `enum`.<br> The display format of a column of type `bool` can be specified by the property `bool`. Atc determines if a value is boolean if it's equal to the one specified in `bool-format`             |
 | `hidden`        | `boolean` | If `true` the column won't be displayed.                                                                                                                                                                                                                                                                                                                                                                                               |
 | `nowrap`        | `boolean` | If `true`, applies [`white-space: nowrap`](https://developer.mozilla.org/en-US/docs/Web/CSS/white-space) to the column cells.                                                                                                                                                                                                                                                                                                          |
 | `number-format` | `string`  | How to format the numeric values of the column. It must be a string that defines options for Javascript's [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat).<br> Examples: <ul><li>`"style: 'currency', currency: 'JPY'"`</li><li>`"maximumSignificantDigits: 3"`</li></ul>                                                                                      |
-| `date-format`   | `string`  | How to format the datetime values of the column. It must be a a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br>Overrides the root-level `date-format` if provided.<br> Examples: <ul><li>`"YYYY-MM"`</li><li>`"DD/MM/YY HH:mm"`</li></ul>                                                                                                                                                            |
+| `date-format`   | `string`  | How to format the date or datetime values of the column. It must be a a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br>Overrides the root-level `date-format` if provided.<br> Examples: <ul><li>`"YYYY-MM"`</li><li>`"DD/MM/YY HH:mm"`</li></ul>                                                                                                                                                    |
 | `formatter`     | `string`  | A custom formatter for the column values. Accepts any javascript code. Typically you want to use some [Javascript template literal string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) like in the example. It has access to the variables `$cell`, `$row` and $ctx with some additional context.<br> Examples: <ul><li>`"\`#${$row.someOtherColumn}) <strong>${$cell}</strong>\`"`</li></ul> |
 | `enum`          | `object`  | Defines how enum values are formatted. Each key of the `enum` object is a valid enum string and its value is how it will be displayed.<br>Example: <pre>enum:<br>&nbsp;&nbsp;- won: "\<span style="color: green"\>WON\</span\>"<br>&nbsp;&nbsp;- lost: "\<span style="color: red"\>LOST\</span\>"</pre>                                                                                                                                |
+| `bool`          | `object`  | Defines how boolean values are formatted. This optional configuration object has two `string` keys: `yes-format` and `no-format`. `yes-format` defines how `true` values are show while `no-format` specifies how `false` values are show. The default values are `"✔️"` and `"✖️"`                                                                                                                                                          |
 
 <h5 dir="auto" id="pagination-configuration-properties">Pagination configuration properties</h5
 
@@ -161,23 +164,31 @@ The class exposes the following methods:
 //   `lineNo` = n = nth line
 //   `lineNo` = -1 = last line
 
-// Insert the new table line represented by `values` into the provided `vault`'s `file` at position `lineNo`.
-async function insertLineToFile(file: TFile, vault: Vault, lineNo: number, values: LineValues): Promise<void> {}
+// In all the followin methods `fileContent: string` is typically the content of the current file
+// accessible with `this.app.workspace.getActiveViewOfType(MarkdownView)?.data` or the content
+// of a file got with `this.app.vault.read()`
 
-// Replace the table line at position `lineNo` in the provided `vault`'s `file` with
-//   a new table line represented by `values` 
-async function modifyLineInFile(file: TFile, vault: Vault, lineNo: number, values: LineValues): Promise<void> {}
+// Insert the new table line represented by `values` into the provided fileContent at position `lineNo`.
+//   Return the modified file content
+function insertLine(fileContent: string, lineNo: number, values: LineValues): string {}
 
-// Replace the header of the table in the provided `vault`'s `file` with
+// Replace the table line at position `lineNo` in the provided fileContent with
+//   a new table line represented by `values`
+//   Return the modified file content
+function modifyLine(fileContent: string, lineNo: number, values: LineValues): string {}
+
+// Replace the header of the table in the provided fileContent with
 //   a new table header represented by `values`
-async function modifyHeaderInFile(file: TFile, vault: Vault, values: LineValues): Promise<void> {}
+//   Return the modified file content
+function modifyHeader(fileContent: string, values: LineValues): string {}
 
-// Delete the table line at position `lineNo` in the provided `vault`'s `file` with
-async function removeLineFromFile(file: TFile, vault: Vault, lineNo: number): Promise<void> {}
+// Delete the table line at position `lineNo` in the provided fileContent with
+//   Return the modified file content
+function removeLine(fileContent: string, lineNo: number): string {}
 
-// Returns the values of the table line at position `lineNo` in the provided `vault`'s `file` with
-async function readLineFromFile(file: TFile, vault: Vault, lineNo: number): Promise<LineValues | null> {}
+// Returns the values of the table line at position `lineNo` in the provided fileContent with
+function readLine(fileContent: string, lineNo: number): LineValues| null {}
 
-// Returns all the values of the table in the provided `vault`'s `file` with
-async function readTableLinesFromFile(file: TFile, vault: Vault): Promise<LineValues[] | null> {}
+// Returns all the values of the table in the provided fileContent with
+function readTableLines(fileContent: string): LineValues | null {}
 ```

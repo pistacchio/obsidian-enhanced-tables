@@ -14,8 +14,12 @@ import {
   parseNumberFormat,
 } from 'src/utils/formatters';
 import {
+  DEFAULT_BOOL_NO_FORMAT,
+  DEFAULT_BOOL_YES_FORMAT,
+  DEFAULT_BOOL_YES_INPUT,
   DEFAULT_COLUMNS_TYPE,
   DEFAULT_DATE_FORMAT,
+  DEFAULT_DATE_TIME_FORMAT,
   DEFAULT_NUMBER_FORMAT,
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGES_SIZE_OPTIONS,
@@ -74,18 +78,34 @@ export function useAdvancedTableControlsState(
 
         const { formatter, ...columnConfigurationData } = columnConfiguration;
 
+        const type = columnConfigurationData.type ?? DEFAULT_COLUMNS_TYPE;
+        let dateFormat = columnConfiguration['date-format'];
+        if (!dateFormat) {
+          if (type === 'datetime') {
+            dateFormat = DEFAULT_DATE_TIME_FORMAT;
+          } else {
+            dateFormat = DEFAULT_DATE_FORMAT;
+          }
+        }
+
         const columnData = {
           ...columnConfigurationData,
           alias: columnConfigurationData.alias || name,
-          type: columnConfigurationData.type ?? DEFAULT_COLUMNS_TYPE,
+          type,
           name,
           index,
-          dateFormat: columnConfiguration['date-format'] ?? DEFAULT_DATE_FORMAT,
+          dateFormat,
           numberFormat: parseNumberFormat(
             columnConfiguration['number-format'] ?? '',
             DEFAULT_NUMBER_FORMAT,
           ),
-        } as AtcDataColumn;
+          yesFormat:
+            columnConfigurationData.bool?.['yes-format'] ??
+            DEFAULT_BOOL_YES_FORMAT,
+          noFormat:
+            columnConfigurationData.bool?.['no-format'] ??
+            DEFAULT_BOOL_NO_FORMAT,
+        } as unknown as AtcDataColumn;
 
         columnData.formatter = makeFormatterForColumn(columnData, formatter);
 
@@ -98,13 +118,17 @@ export function useAdvancedTableControlsState(
 
   const rows = useMemo<AtcDataRow[]>(() => {
     const dateFormat = configuration['date-format'] ?? DEFAULT_DATE_FORMAT;
+    const boolFormat = configuration['bool-format'] ?? DEFAULT_BOOL_YES_INPUT;
 
-    let rows: AtcDataRow[] = tableData.rows.map((cells, index) => {
+    let rows: AtcDataRow[] = [];
+
+    rows = tableData.rows.map((cells, index) => {
       let orderedCells: AtcDataCell[] = cells.map((cellContent, index) => {
         const value = extractValue(
           cellContent,
           indexedColumns[index],
           dateFormat,
+          boolFormat,
         );
 
         return {
@@ -122,6 +146,7 @@ export function useAdvancedTableControlsState(
         ...c,
         formattedValue: indexedColumns[idx].formatter(c.value, allCells, {
           app,
+          data: { rows, columns: indexedColumns },
         }),
       }));
 

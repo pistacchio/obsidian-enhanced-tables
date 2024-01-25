@@ -1,5 +1,4 @@
 import { AtcDataColumn, CellValueFormatter } from 'src/utils/types';
-import { App } from 'obsidian';
 
 export function makeFormatterForColumn(
   column: AtcDataColumn,
@@ -26,7 +25,17 @@ export function makeFormatterForColumn(
         }
       };
       break;
+    case 'bool':
+      return (val) => {
+        try {
+          return val ? column.yesFormat : column.notFormat;
+        } catch (e) {
+          return val;
+        }
+      };
+      break;
     case 'date':
+    case 'datetime':
       return (val) => {
         try {
           return val.format(column.dateFormat);

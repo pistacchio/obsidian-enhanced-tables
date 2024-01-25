@@ -1,0 +1,23 @@
+name: Plugin release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: npm build
+        run: |
+          npm install
+          npm run build
+      - name: Create Release
+        uses: ncipollo/release-action@v1.7.3
+        with:
+          artifacts: "main.js,manifest.json,styles.css"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
