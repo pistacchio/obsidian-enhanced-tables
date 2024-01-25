@@ -28,7 +28,8 @@ import { extractValue } from 'src/utils/values';
 import { getSortingFunction } from 'src/utils/sorting';
 
 import { PaginationOptions } from 'src/components/PaginationView';
-import { App } from 'obsidian';
+import { App, MarkdownView } from 'obsidian';
+import { TableManager } from 'src/TableManager';
 
 export function useAdvancedTableControlsState(
   app: App,
@@ -122,18 +123,23 @@ export function useAdvancedTableControlsState(
 
     let rows: AtcDataRow[] = [];
 
-    rows = tableData.rows.map((cells, index) => {
-      let orderedCells: AtcDataCell[] = cells.map((cellContent, index) => {
+    const currentContent =
+      app.workspace.getActiveViewOfType(MarkdownView)?.data ?? '';
+    const tableManager = new TableManager();
+    const rawTableLines = tableManager.readTableLines(currentContent);
+
+    rows = tableData.rows.map((cells, rowIdx) => {
+      let orderedCells: AtcDataCell[] = cells.map((cellContent, cellIdx) => {
         const value = extractValue(
           cellContent,
-          indexedColumns[index],
+          indexedColumns[cellIdx],
           dateFormat,
           boolFormat,
         );
 
         return {
-          column: indexedColumns[index],
-          rawValue: cellContent,
+          column: indexedColumns[cellIdx],
+          rawValue: rawTableLines?.[rowIdx + 2]?.[cellIdx] ?? '',
           value,
         } as AtcDataCell;
       });
@@ -151,7 +157,7 @@ export function useAdvancedTableControlsState(
       }));
 
       return {
-        index,
+        index: rowIdx,
         orderedCells,
         ...allCells,
       } as AtcDataRow;

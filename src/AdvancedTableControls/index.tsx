@@ -3,7 +3,8 @@ import { AtcConfiguration, RawTableData } from 'src/utils/types';
 import { useAdvancedTableControlsState } from 'src/AdvancedTableControls/useAdvancedTableControlsState';
 import { PaginationView } from 'src/components/PaginationView';
 import { ControlsView } from 'src/components/Controls';
-import { App } from 'obsidian';
+import { App, MarkdownView } from 'obsidian';
+import { TableManager } from 'src/TableManager';
 
 type AdvancedTableControlsProps = {
   app: App;
@@ -42,6 +43,8 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
 
     tbodyRef.current!.innerHTML = '';
 
+    console.log(rows);
+
     rows.forEach((row) => {
       const tr = document.createElement('tr');
       tr.setAttribute('data-atc-row', row.index.toString());
@@ -63,6 +66,42 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
           } catch (e) {
             td.innerHTML = cell.formattedValue;
           }
+
+          // Editing. Activate it on click
+          const onClickHandler = () => {
+            console.log(cell.rawValue);
+            td.innerHTML = cell.rawValue;
+            td.setAttribute('contenteditable', 'true');
+
+            td.removeEventListener('click', onClickHandler);
+          };
+
+          td.addEventListener('click', onClickHandler);
+
+          // When the user is done editing, retrieve the current raw values from the
+          // markdown table and change the current cell one
+          td.addEventListener('blur', () => {
+            const currentContent =
+              app.workspace.getActiveViewOfType(MarkdownView)?.data ?? '';
+            const tableManager = new TableManager();
+
+            const modifiedRowValues = row.orderedCells.map((c, i) =>
+              i === idx2 ? td.innerHTML : c.rawValue,
+            );
+            const modifiedContent = tableManager.modifyLine(
+              currentContent,
+              row.index,
+              modifiedRowValues,
+            );
+
+            // Set the modified data
+
+            // @ts-ignore
+            app.workspace.getActiveFileView().setViewData(modifiedContent);
+
+            // @ts-ignore
+            app.workspace.activeEditor.previewMode.rerender();
+          });
 
           tr.appendChild(td);
         });
