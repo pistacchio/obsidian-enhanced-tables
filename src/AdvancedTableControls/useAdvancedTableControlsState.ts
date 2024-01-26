@@ -23,6 +23,7 @@ import {
   DEFAULT_NUMBER_FORMAT,
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGES_SIZE_OPTIONS,
+  DEFAULT_TIME_FORMAT,
 } from 'src/utils/sharedConstants';
 import { extractValue } from 'src/utils/values';
 import { getSortingFunction } from 'src/utils/sorting';
@@ -80,18 +81,25 @@ export function useAdvancedTableControlsState(
         const { formatter, ...columnConfigurationData } = columnConfiguration;
 
         const type = columnConfigurationData.type ?? DEFAULT_COLUMNS_TYPE;
-        let dateFormat = columnConfiguration['date-format'];
-        if (!dateFormat) {
-          if (type === 'datetime') {
-            dateFormat = DEFAULT_DATE_TIME_FORMAT;
-          } else {
-            dateFormat = DEFAULT_DATE_FORMAT;
-          }
+
+        let dateFormat;
+        if (type === 'datetime') {
+          dateFormat =
+            columnConfiguration['date-format'] ?? DEFAULT_DATE_TIME_FORMAT;
+        } else if (type === 'time') {
+          dateFormat = DEFAULT_TIME_FORMAT;
+        } else {
+          dateFormat =
+            columnConfiguration['date-format'] ?? DEFAULT_DATE_FORMAT;
         }
 
         const columnData = {
           ...columnConfigurationData,
           alias: columnConfigurationData.alias || name,
+          editable:
+            'editable' in columnConfiguration
+              ? !!columnConfiguration.editable
+              : !!configuration.editable,
           type,
           name,
           index,
@@ -101,11 +109,9 @@ export function useAdvancedTableControlsState(
             DEFAULT_NUMBER_FORMAT,
           ),
           yesFormat:
-            columnConfigurationData.bool?.['yes-format'] ??
-            DEFAULT_BOOL_YES_FORMAT,
+            columnConfigurationData['yes-format'] ?? DEFAULT_BOOL_YES_FORMAT,
           noFormat:
-            columnConfigurationData.bool?.['no-format'] ??
-            DEFAULT_BOOL_NO_FORMAT,
+            columnConfigurationData['no-format'] ?? DEFAULT_BOOL_NO_FORMAT,
         } as unknown as AtcDataColumn;
 
         columnData.formatter = makeFormatterForColumn(columnData, formatter);
@@ -119,7 +125,9 @@ export function useAdvancedTableControlsState(
 
   const rows = useMemo<AtcDataRow[]>(() => {
     const dateFormat = configuration['date-format'] ?? DEFAULT_DATE_FORMAT;
-    const boolFormat = configuration['bool-format'] ?? DEFAULT_BOOL_YES_INPUT;
+    const datetimeFormat =
+      configuration['datetime-format'] ?? DEFAULT_DATE_TIME_FORMAT;
+    const yesFormat = configuration['yes-format'] ?? DEFAULT_BOOL_YES_INPUT;
 
     let rows: AtcDataRow[] = [];
 
@@ -130,11 +138,21 @@ export function useAdvancedTableControlsState(
 
     rows = tableData.rows.map((cells, rowIdx) => {
       let orderedCells: AtcDataCell[] = cells.map((cellContent, cellIdx) => {
+        const dateFieldFormat = (() => {
+          if (indexedColumns[cellIdx].type === 'time') {
+            return DEFAULT_TIME_FORMAT;
+          } else if (indexedColumns[cellIdx].type === 'datetime') {
+            return datetimeFormat;
+          }
+
+          return dateFormat;
+        })();
+
         const value = extractValue(
           cellContent,
           indexedColumns[cellIdx],
-          dateFormat,
-          boolFormat,
+          dateFieldFormat,
+          yesFormat,
         );
 
         return {

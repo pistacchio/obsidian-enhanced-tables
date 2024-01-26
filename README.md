@@ -42,6 +42,8 @@ If you want to add some advanced control or formatting to any standard Obsidian 
 ```yaml atc
 
 # date-format: DD-MM-YYYY
+yes-format: "yes"
+no-format: "no"
 
 columns:
   Number column:
@@ -64,6 +66,10 @@ columns:
       '3': '⭐️⭐️⭐️'
       '4': '⭐️⭐️⭐️⭐️'
       '5': '⭐️⭐️⭐️⭐️⭐️'
+  Boolean:
+    type: bool
+    yes-format: '👍'
+    no-format: '👎'
 filter: $row.numberColumn > 1200
 filters:
  Small numbers: $row.numberColumn < 1200
@@ -75,18 +81,23 @@ pagination:
   page-sizes:
    - 5
    - 10
+style: |
+   th {
+     background-color: var(--color-base-50) !important;
+     color: var(--color-base-70) !important;
+   }
 # hide-controls: true
 hide-configuration: true
 ```
 </pre>
 
 <pre>
-| Id | Number column | Date       | Rating | Formatted    | Hidden             |
-|----|---------------|------------|--------|--------------|--------------------|
-| 1  | 500           | 01-01-2024 | 2      | _**bold**_   | Text you won't see |
-| 2  | 1000          | 07-02-2024 | 5      |              |                    |
-| 3  | 1500          | 11-06-2024 | 1      | green        |                    |
-| 4  | 10000         | 05-01-2024 | 4      | ~~strike~~   |                    |
+| Id | Number column | Date       | Rating | Formatted    | Hidden             | Bool     |
+|----|---------------|------------|--------|--------------|--------------------| -------- |
+| 1  | 500           | 01-01-2024 | 2      | _**bold**_   | Text you won't see |          |
+| 2  | 1000          | 07-02-2024 | 5      |              |                    | no       |
+| 3  | 1500          | 11-06-2024 | 1      | green        |                    | yes      | 
+| 4  | 10000         | 05-01-2024 | 4      | ~~strike~~   |                    | whatever |
 </pre>
 
 ### Configuration syntax
@@ -106,7 +117,9 @@ All the configuration properties are optional.
 | Property             | Type      | Description                                                                                                                                                                                                                                                                                                                                                                                  |
 |----------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `date-format`        | `string`  | Must be a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br> This property defines the _input_ format for all columns of type `date`, eg how **ATC** expects you to write them.<br> The default is `DD-MM-YYYY`.                                                                                                                                              |
-| `bool-format`        | `string`  | The string that specifies, table-wide, how a boolean `true` value is represented in columns of type `bool`. The default is `"1"`                                                                                                                                                                                                                                                              |
+| `datetime-format`    | `string`  | Must be a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br> This property defines the _input_ format for all columns of type `datetime`, eg how **ATC** expects you to write them.<br> The default is `DD-MM-YYYY HH:mm`.                                                                                                                                    |
+| `yes-format`         | `string`  | The string that specifies, table-wide, how a boolean `true` value is represented in columns of type `bool`. The default is `"1"`                                                                                                                                                                                                                                                             |
+| `no-format`          | `string`  | The string that specifies, table-wide, how a boolean `false` value is represented in columns of type `bool`. The default is `"0"`                                                                                                                                                                                                                                                            |
 | `columns`            | `object`  | An object with the configurations for the table columns. Each column is optional: you don't have to configure a column if you don't need any advanced feature for it. The name of column must match the one on the first row of the table (its header).<br> Each column configuration is an object: see [Column configuration properties](#column-configuration-properties) for the details. |
 | `filter`             | `string`  | Default filter for the table. Write it like a Javascript expression that has access to the `$row` variable.<br>Example: <ul><li>`$row.rating > 3`</li><li>`$row.status === 'active'`</li></ul>                                                                                                                                                                                               |
 | `filters`            | `object`  | Additional filters. The keys of the object will populate the filter selection dropdown. The value of each key is a Javascript expression that has access to the `$row` variable - see `filter` above.                                                                                                                                                                                        |
@@ -114,6 +127,8 @@ All the configuration properties are optional.
 | `pagination`         | `object`  | Pagination options, see [Pagination configuration properties](#pagination-configuration-properties) for the details.                                                                                                                                                                                                                                                                         |
 | `hide-controls`      | `boolean` | If `true` do not show the sort and filter controls.                                                                                                                                                                                                                                                                                                                                          |
 | `hide-configuration` | `boolean` | If `true` hide the **ATC** yaml configuration code when in in view mode.                                                                                                                                                                                                                                                                                                                     |
+| `style`              | `string`  | A css string to apply custom styling to the table                                                                                                                                                                                                                                                                                                                                            |
+| `editable`           | `boolean` | If `true`, the values of the column are editable also in view mode with inputs appropriate to the `type` of each column. This default configuration can be overridden per-column ⚠️ **This is an experimental feature. It might not work as expected, corrupt your data and provide a user experience that is not optima!**                                                                  |
 
 <h5 dir="auto" id="column-configuration-properties">Column configuration properties</h5
 
@@ -122,14 +137,16 @@ All the column configuration properties are optional.
 | Property        | Type      | Description                                                                                                                                                                                                                                                                                                                                                                                                                            |
 |-----------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `alias`         | `string`  | Sometimes column names can be long and not convienient to bse used in filters and formatter. You can specify an alias string for the column. If you do so, you _must_ use it in filters and formatters.                                                                                                                                                                                                                                |
-| `type`          | `string`  | Type of the column values. The possible values are: `string` \                                                                                                                                                                                                                                                                                                                                                                         | `number` \| `date` \| `datetime` \| `enum` \| `bool`. The default is `string`.<br> The display format of a column of type `number` can be specified by the property `number-format`.<br> The display format of a column of type `date` or `datetime` can be specified by the property `date-format`. <br> The display format of a column of type `enum` can be specified by the property `enum`.<br> The display format of a column of type `bool` can be specified by the property `bool`. Atc determines if a value is boolean if it's equal to the one specified in `bool-format`             |
+| `type`          | `string`  | Type of the column values. The possible values are: `string` \                                                                                                                                                                                                                                                                                                                                                                         | `number` \| `date` \| `datetime` \| `time` \| `enum` \| `bool`. The default is `string`.<br> The display format of a column of type `number` can be specified by the property `number-format`.<br> The display format of a column of type `date` or `datetime` can be specified by the property `date-format` while `time` columns are always read formatted as `HH:mm`.<br> The display format of a column of type `enum` can be specified by the property `enum`.<br> The display format of a column of type `bool` can be specified by the property `bool`. Atc determines if a value is boolean if it's equal to the one specified in the root-level `yes-format`             |
 | `hidden`        | `boolean` | If `true` the column won't be displayed.                                                                                                                                                                                                                                                                                                                                                                                               |
 | `nowrap`        | `boolean` | If `true`, applies [`white-space: nowrap`](https://developer.mozilla.org/en-US/docs/Web/CSS/white-space) to the column cells.                                                                                                                                                                                                                                                                                                          |
 | `number-format` | `string`  | How to format the numeric values of the column. It must be a string that defines options for Javascript's [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat).<br> Examples: <ul><li>`"style: 'currency', currency: 'JPY'"`</li><li>`"maximumSignificantDigits: 3"`</li></ul>                                                                                      |
-| `date-format`   | `string`  | How to format the date or datetime values of the column. It must be a a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br>Overrides the root-level `date-format` if provided.<br> Examples: <ul><li>`"YYYY-MM"`</li><li>`"DD/MM/YY HH:mm"`</li></ul>                                                                                                                                                    |
+| `date-format`   | `string`  | How to format the `date` or `datetime` values of the column. It must be a a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br>Overrides the root-level `date-format` and `datetime-format` if provided.<br> Examples: <ul><li>`"YYYY-MM"`</li><li>`"DD/MM/YY HH:mm"`</li></ul>                                                                                                                          |
+| `yes-format`    | `object`  | Defines how `true` boolean values are formatted. The default value is `"✔"` .                                                                                                                                                                                                                                                                                                                                                          |
+| `no-format`     | `object`  | Defines how `false` boolean values are formatted. The default value is `"✖"` .                                                                                                                                                                                                                                                                                                                                                         |
 | `formatter`     | `string`  | A custom formatter for the column values. Accepts any javascript code. Typically you want to use some [Javascript template literal string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) like in the example. It has access to the variables `$cell`, `$row` and $ctx with some additional context.<br> Examples: <ul><li>`"\`#${$row.someOtherColumn}) <strong>${$cell}</strong>\`"`</li></ul> |
 | `enum`          | `object`  | Defines how enum values are formatted. Each key of the `enum` object is a valid enum string and its value is how it will be displayed.<br>Example: <pre>enum:<br>&nbsp;&nbsp;- won: "\<span style="color: green"\>WON\</span\>"<br>&nbsp;&nbsp;- lost: "\<span style="color: red"\>LOST\</span\>"</pre>                                                                                                                                |
-| `bool`          | `object`  | Defines how boolean values are formatted. This optional configuration object has two `string` keys: `yes-format` and `no-format`. `yes-format` defines how `true` values are show while `no-format` specifies how `false` values are show. The default values are `"✔️"` and `"✖️"`                                                                                                                                                          |
+| `editable`      | `boolean` | Overrides the root-level `editable` value for the specific column, so that it is possible to only make some columns editable in view mode.                                                                                                                                                                                                                                                                                             |
 
 <h5 dir="auto" id="pagination-configuration-properties">Pagination configuration properties</h5
 

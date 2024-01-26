@@ -13,6 +13,7 @@ export type AtcConfigurationColumnType =
   | 'bool'
   | 'date'
   | 'datetime'
+  | 'time'
   | 'enum';
 
 export type AtcConfigurationPagination = {
@@ -20,31 +21,33 @@ export type AtcConfigurationPagination = {
   'page-sizes'?: number[];
 };
 
-export type AtcConfigurationBoolean = {
-  'yes-format'?: string;
-  'no-format'?: string;
-};
-
 export type AtcConfiguration = {
   columns?: Record<string, AtcConfigurationColumn>;
+  editable?: boolean;
   'date-format'?: string;
-  'bool-format'?: string;
+  'datetime-format'?: string;
+  'yes-format'?: string;
+  'no-format'?: string;
   filter?: string;
   filters?: Record<string, string>;
   sort?: string;
   pagination?: AtcConfigurationPagination;
   'hide-controls': boolean;
   'hide-configuration': boolean;
+  style?: string;
+  'fix-header'?: boolean;
 };
 
 export type AtcConfigurationColumn = {
   alias?: string;
   type?: AtcConfigurationColumnType;
+  editable?: boolean;
   'date-format'?: string;
   'number-format'?: string;
   formatter?: string;
   enum?: Record<string, string>;
-  bool?: AtcConfigurationBoolean;
+  'yes-format'?: string;
+  'no-format'?: string;
   hidden?: boolean;
   nowrap?: boolean;
 };
@@ -58,14 +61,19 @@ export type Pagination = {
 
 export type AtcDataColumn = Omit<
   AtcConfigurationColumn,
-  'date-format' | 'bool' | 'bool-format' | 'number-format' | 'formatter'
+  | 'date-format'
+  | 'bool'
+  | 'yes-format'
+  | 'no-format'
+  | 'number-format'
+  | 'formatter'
 > & {
   name: string;
   index: number;
   dateFormat: string;
   numberFormat: Record<string, any>;
   yesFormat: string;
-  notFormat: string;
+  noFormat: string;
   formatter: CellValueFormatter;
   el: HTMLTableCellElement;
 };

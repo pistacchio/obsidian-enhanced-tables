@@ -1,10 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { AtcConfiguration, RawTableData } from 'src/utils/types';
 import { useAdvancedTableControlsState } from 'src/AdvancedTableControls/useAdvancedTableControlsState';
 import { PaginationView } from 'src/components/PaginationView';
 import { ControlsView } from 'src/components/Controls';
 import { App, MarkdownView } from 'obsidian';
 import { TableManager } from 'src/TableManager';
+import { makeEditor } from 'src/AdvancedTableControls/editors';
+
+import * as css from 'css';
 
 type AdvancedTableControlsProps = {
   app: App;
@@ -43,11 +46,13 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
 
     tbodyRef.current!.innerHTML = '';
 
-    console.log(rows);
-
     rows.forEach((row) => {
       const tr = document.createElement('tr');
       tr.setAttribute('data-atc-row', row.index.toString());
+
+      const currentContent =
+        app.workspace.getActiveViewOfType(MarkdownView)?.data ?? '';
+      const tableManager = new TableManager();
 
       row.orderedCells
         .filter((c) => !c.column.hidden)
@@ -68,25 +73,9 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
           }
 
           // Editing. Activate it on click
-          const onClickHandler = () => {
-            console.log(cell.rawValue);
-            td.innerHTML = cell.rawValue;
-            td.setAttribute('contenteditable', 'true');
-
-            td.removeEventListener('click', onClickHandler);
-          };
-
-          td.addEventListener('click', onClickHandler);
-
-          // When the user is done editing, retrieve the current raw values from the
-          // markdown table and change the current cell one
-          td.addEventListener('blur', () => {
-            const currentContent =
-              app.workspace.getActiveViewOfType(MarkdownView)?.data ?? '';
-            const tableManager = new TableManager();
-
+          const onValueChange = (newVal: string) => {
             const modifiedRowValues = row.orderedCells.map((c, i) =>
-              i === idx2 ? td.innerHTML : c.rawValue,
+              i === idx2 ? newVal : c.rawValue,
             );
             const modifiedContent = tableManager.modifyLine(
               currentContent,
@@ -95,23 +84,54 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
             );
 
             // Set the modified data
-
-            // @ts-ignore
-            app.workspace.getActiveFileView().setViewData(modifiedContent);
+            app.workspace
+              // @ts-ignore
+              .getActiveFileView()
+              .setViewData(modifiedContent, true);
 
             // @ts-ignore
             app.workspace.activeEditor.previewMode.rerender();
-          });
+          };
+
+          if (cell.column.editable) {
+            makeEditor(td, cell, configuration, onValueChange);
+            td.style.cursor = 'pointer';
+          }
 
           tr.appendChild(td);
         });
 
       tbodyRef.current!.appendChild(tr);
     });
-  }, [rows]);
+  }, [app.workspace, configuration, rows]);
+
+  // If the user defined a custom make, try to make it scoped to the class
+  // advanced-table-controls
+  const style = useMemo<string | undefined>(() => {
+    if (!configuration.style) {
+      return undefined;
+    }
+
+    try {
+      const customCss = css.parse(configuration.style);
+      customCss?.stylesheet?.rules.forEach((r) => {
+        if ('selectors' in r) r.selectors = r.selectors?.map((s) => `& ${s}`);
+      });
+
+      return `
+        .advanced-table-controls {
+          ${css.stringify(customCss)}
+        }
+      `;
+    } catch (e) {
+      return undefined;
+    }
+  }, []);
 
   return (
     <div className="advanced-table-controls">
+      {style && <style>{style}</style>}
+
       {!configuration['hide-controls'] && (
         <ControlsView
           configuration={configuration}
@@ -132,9 +152,7 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
                 .map((c, idx) => (
                   <th
                     key={idx}
-                    className={
-                      c.nowrap ? 'advanced-table-controls-nowrap' : undefined
-                    }
+                    className={`${c.nowrap ? 'advanced-table-controls-nowrap' : ''} ${configuration['fix-header'] ? 'advanced-table-controls-fix-header' : ''}`}
                     dangerouslySetInnerHTML={{ __html: c.name }}
                   />
                 ))}

@@ -28,6 +28,7 @@ export function getSortingFunction(
       break;
     case 'date':
     case 'datetime':
+    case 'time':
       if (desc) {
         return (a, b) => {
           if (!a && !b) {

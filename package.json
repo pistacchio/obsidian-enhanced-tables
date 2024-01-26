@@ -12,6 +12,7 @@
   "author": "pistacchio",
   "license": "MIT",
   "devDependencies": {
+    "@types/css": "^0.0.37",
     "@types/node": "^16.11.6",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
@@ -30,6 +31,7 @@
     "typescript": "4.7.4"
   },
   "dependencies": {
+    "css": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

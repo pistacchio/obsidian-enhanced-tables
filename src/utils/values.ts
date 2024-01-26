@@ -5,7 +5,7 @@ export function extractValue(
   rawValue: string,
   column: AtcDataColumn,
   dateFormat: string,
-  booleanFormat: string,
+  yesFormat: string,
 ): any {
   switch (column.type) {
     case 'number':
@@ -17,13 +17,14 @@ export function extractValue(
       break;
     case 'bool':
       try {
-        return rawValue === booleanFormat;
+        return rawValue === yesFormat;
       } catch (e) {
         return null;
       }
       break;
     case 'date':
     case 'datetime':
+    case 'time':
       try {
         const parsedDate = moment(rawValue, dateFormat);
 

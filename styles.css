@@ -8,7 +8,7 @@ If your plugin does not need CSS, delete this file.
 */
 
 .advanced-table-controls {
-& .table-container {
+  & .table-container {
     width: 100%;
     overflow-x: scroll;
   }
@@ -80,6 +80,11 @@ If your plugin does not need CSS, delete this file.
 
 .advanced-table-controls-nowrap {
   white-space: nowrap !important;
+}
+
+.advanced-table-controls-fix-header {
+  position: sticky;
+  top: 0;
 }
 
 .advanced-table-controls-hidden {

@@ -28,7 +28,7 @@ export function makeFormatterForColumn(
     case 'bool':
       return (val) => {
         try {
-          return val ? column.yesFormat : column.notFormat;
+          return val ? column.yesFormat : column.noFormat;
         } catch (e) {
           return val;
         }
@@ -36,6 +36,7 @@ export function makeFormatterForColumn(
       break;
     case 'date':
     case 'datetime':
+    case 'time':
       return (val) => {
         try {
           return val.format(column.dateFormat);
