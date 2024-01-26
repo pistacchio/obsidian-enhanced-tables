@@ -1,10 +1,10 @@
 import { App, MarkdownPostProcessorContext, parseYaml } from 'obsidian';
 import {
-  ATC_RENDER_TABLE_ATTRIBUTE,
-  ATC_YAML_SIGNAL,
+  ET_RENDER_TABLE_ATTRIBUTE,
+  ET_YAML_SIGNAL,
 } from 'src/utils/sharedConstants';
-import { AtcConfiguration, RawTableData } from 'src/utils/types';
-import { AdvancedTableControls } from 'src/AdvancedTableControls';
+import { EtConfiguration, RawTableData } from 'src/utils/types';
+import { EnhancedTables } from 'src/EnhancedTables';
 import { createRoot } from 'react-dom/client';
 import React from 'react';
 
@@ -12,7 +12,7 @@ export async function getMountContext(
   element: HTMLElement,
   ctx: MarkdownPostProcessorContext,
 ): Promise<
-  [HTMLElement, AtcConfiguration, HTMLTableElement, RawTableData] | null
+  [HTMLElement, EtConfiguration, HTMLTableElement, RawTableData] | null
 > {
   // The timeout is necessary to give Obsidian time to render the whole page
   // or else it would be impossible to find the table (since that would not
@@ -63,28 +63,30 @@ export async function getMountContext(
   });
 }
 
-export function mountAdvancedTableControls(
+export function mountEnhancedTables(
   app: App,
   yamlCodeEl: HTMLElement,
-  configuration: AtcConfiguration,
+  configuration: EtConfiguration,
   tableEl: HTMLTableElement,
   tableData: RawTableData,
 ) {
   Array.from(
-    document.querySelectorAll(`div[${ATC_RENDER_TABLE_ATTRIBUTE}]`),
+    document.querySelectorAll(`div[${ET_RENDER_TABLE_ATTRIBUTE}]`),
   ).forEach((e) => e.remove());
 
+  console.log('HEER');
+
   const rootElement = document.createElement('div');
-  rootElement.setAttribute(ATC_RENDER_TABLE_ATTRIBUTE, 'true');
+  rootElement.setAttribute(ET_RENDER_TABLE_ATTRIBUTE, 'true');
   tableEl.after(rootElement);
-  tableEl.className = 'advanced-table-controls-hidden';
+  tableEl.className = 'enhanced-tables-hidden';
 
   if (configuration['hide-configuration']) {
     yamlCodeEl.parentElement?.remove();
   }
 
   createRoot(rootElement).render(
-    <AdvancedTableControls
+    <EnhancedTables
       app={app}
       configuration={configuration}
       tableData={tableData}
@@ -95,12 +97,12 @@ export function mountAdvancedTableControls(
 function extractYamlCodeFromTheCodeBlock(
   yamlCodeEl: HTMLElement,
   ctx: MarkdownPostProcessorContext,
-): AtcConfiguration | null {
+): EtConfiguration | null {
   try {
     const sectionInfo = ctx.getSectionInfo(yamlCodeEl);
     const pageLines = sectionInfo?.text.split('\n');
 
-    if (!pageLines?.[sectionInfo!.lineStart].startsWith(ATC_YAML_SIGNAL)) {
+    if (!pageLines?.[sectionInfo!.lineStart].startsWith(ET_YAML_SIGNAL)) {
       return null;
     }
 
@@ -110,7 +112,7 @@ function extractYamlCodeFromTheCodeBlock(
 
     const yamlObj = yamlCode ? parseYaml(yamlCode) : null;
 
-    return yamlObj as AtcConfiguration;
+    return yamlObj as EtConfiguration;
   } catch (e) {
     console.error('Cannot parse the yaml configuration');
     console.error(e);

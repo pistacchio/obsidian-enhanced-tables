@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { AtcConfiguration, AtcDataColumn } from 'src/utils/types';
+import { EtConfiguration, EtDataColumn } from 'src/utils/types';
 
 type FiltersConfiguration = [string, string][];
 
@@ -14,8 +14,8 @@ const ASC = 'asc';
 const DESC = 'desc';
 
 type ControlsViewProps = {
-  columns: AtcDataColumn[];
-  configuration: AtcConfiguration;
+  columns: EtDataColumn[];
+  configuration: EtConfiguration;
   filtering: string | null;
   setFiltering: Dispatch<SetStateAction<string | null>>;
   sorting: string | null;
@@ -58,7 +58,7 @@ export const ControlsView: React.FC<ControlsViewProps> = ({
   }, [innerSorting, setSorting, sortOrder]);
 
   return (
-    <div className="advanced-table-controls-controls">
+    <div className="enhanced-tables-controls">
       <div className="sorting">
         <label>Sort</label>
         <div>

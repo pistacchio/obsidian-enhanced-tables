@@ -1,4 +1,4 @@
-# Advanced table controls
+# Enhanced tables
 
 A plugin for [Obsidian](https://obsidian.md/) to add advanced controls (like sorting, filtering and pagination) to standard markup tables
 
@@ -21,25 +21,25 @@ A plugin for [Obsidian](https://obsidian.md/) to add advanced controls (like sor
 - Open Settings > Third-party plugin
 - Make sure Safe mode is off
 - Click Browse community plugins
-- Search for "Advanced table controls"
+- Search for "Emhanced tables"
 - Click Install
 - Once installed, close the community plugins window and activate the newly installed plugin
 
 ### Manually installing the plugin
 - Go to the latest Releases
 - Download main.js, manifest.json
-- save into your vault VaultFolder/.obsidian/plugins/advanced-table-controls/
+- save into your vault VaultFolder/.obsidian/plugins/enhanced-tables/
 
 ## How it works
 
-If you want to add some advanced control or formatting to any standard Obsidian table, define _before_ it a block of [yaml](https://quickref.me/yaml.html) code with the **Advanced table controls** configurations you want to apply to the table. When switching to view mode, if the configuration is corrent, the table will be formatted according to the provided configuration and will have all the needed advanced controls.
+If you want to add some advanced control or formatting to any standard Obsidian table, define _before_ it a block of [yaml](https://quickref.me/yaml.html) code with the **Enhanced tables** configurations you want to apply to the table. When switching to view mode, if the configuration is corrent, the table will be formatted according to the provided configuration and will have all the needed advanced controls.
 
 ## Configuration
 
 ### Example configuration for the provided sample table
 
 <pre>
-```yaml atc
+```yaml enhanced-tables
 
 # date-format: DD-MM-YYYY
 yes-format: "yes"
@@ -102,12 +102,12 @@ hide-configuration: true
 
 ### Configuration syntax
 
-#### Yaml code opening syntax - `yaml atc`
+#### Yaml code opening syntax - `yaml enhanced-tables`
 
-In order to be recognized as a valid **Advanced table controls** (**ATC**), the yaml code must be defined with the `atc` keyword.
+In order to be recognized as a valid **Enhanced tables** (**ET**), the yaml code must be defined with the `enhanced-tables` keyword.
 
 <pre>
-```yaml atc
+```yaml enhanced-tables
 </pre>
 
 #### Configuration properties
@@ -116,8 +116,8 @@ All the configuration properties are optional.
 
 | Property             | Type      | Description                                                                                                                                                                                                                                                                                                                                                                                  |
 |----------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `date-format`        | `string`  | Must be a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br> This property defines the _input_ format for all columns of type `date`, eg how **ATC** expects you to write them.<br> The default is `DD-MM-YYYY`.                                                                                                                                              |
-| `datetime-format`    | `string`  | Must be a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br> This property defines the _input_ format for all columns of type `datetime`, eg how **ATC** expects you to write them.<br> The default is `DD-MM-YYYY HH:mm`.                                                                                                                                    |
+| `date-format`        | `string`  | Must be a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br> This property defines the _input_ format for all columns of type `date`, eg how **ET** expects you to write them.<br> The default is `DD-MM-YYYY`.                                                                                                                                              |
+| `datetime-format`    | `string`  | Must be a valid [moment.js string](https://momentjs.com/docs/#/parsing/string-format/).<br> This property defines the _input_ format for all columns of type `datetime`, eg how **ET** expects you to write them.<br> The default is `DD-MM-YYYY HH:mm`.                                                                                                                                    |
 | `yes-format`         | `string`  | The string that specifies, table-wide, how a boolean `true` value is represented in columns of type `bool`. The default is `"1"`                                                                                                                                                                                                                                                             |
 | `no-format`          | `string`  | The string that specifies, table-wide, how a boolean `false` value is represented in columns of type `bool`. The default is `"0"`                                                                                                                                                                                                                                                            |
 | `columns`            | `object`  | An object with the configurations for the table columns. Each column is optional: you don't have to configure a column if you don't need any advanced feature for it. The name of column must match the one on the first row of the table (its header).<br> Each column configuration is an object: see [Column configuration properties](#column-configuration-properties) for the details. |
@@ -126,7 +126,7 @@ All the configuration properties are optional.
 | `sort`               | `string`  | Name or alias of the column to sort the table by. Prepend the name or alias with `-` to specify descendant soring (eg: `lastUpdated` and `-lastUpdated`).                                                                                                                                                                                                                                    |
 | `pagination`         | `object`  | Pagination options, see [Pagination configuration properties](#pagination-configuration-properties) for the details.                                                                                                                                                                                                                                                                         |
 | `hide-controls`      | `boolean` | If `true` do not show the sort and filter controls.                                                                                                                                                                                                                                                                                                                                          |
-| `hide-configuration` | `boolean` | If `true` hide the **ATC** yaml configuration code when in in view mode.                                                                                                                                                                                                                                                                                                                     |
+| `hide-configuration` | `boolean` | If `true` hide the **ET** yaml configuration code when in in view mode.                                                                                                                                                                                                                                                                                                                     |
 | `style`              | `string`  | A css string to apply custom styling to the table                                                                                                                                                                                                                                                                                                                                            |
 | `editable`           | `boolean` | If `true`, the values of the column are editable also in view mode with inputs appropriate to the `type` of each column. This default configuration can be overridden per-column ⚠️ **This is an experimental feature. It might not work as expected, corrupt your data and provide a user experience that is not optima!**                                                                  |
 
@@ -137,7 +137,7 @@ All the column configuration properties are optional.
 | Property        | Type      | Description                                                                                                                                                                                                                                                                                                                                                                                                                            |
 |-----------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `alias`         | `string`  | Sometimes column names can be long and not convienient to bse used in filters and formatter. You can specify an alias string for the column. If you do so, you _must_ use it in filters and formatters.                                                                                                                                                                                                                                |
-| `type`          | `string`  | Type of the column values. The possible values are: `string` \                                                                                                                                                                                                                                                                                                                                                                         | `number` \| `date` \| `datetime` \| `time` \| `enum` \| `bool`. The default is `string`.<br> The display format of a column of type `number` can be specified by the property `number-format`.<br> The display format of a column of type `date` or `datetime` can be specified by the property `date-format` while `time` columns are always read formatted as `HH:mm`.<br> The display format of a column of type `enum` can be specified by the property `enum`.<br> The display format of a column of type `bool` can be specified by the property `bool`. Atc determines if a value is boolean if it's equal to the one specified in the root-level `yes-format`             |
+| `type`          | `string`  | Type of the column values. The possible values are: `string` \                                                                                                                                                                                                                                                                                                                                                                         | `number` \| `date` \| `datetime` \| `time` \| `enum` \| `bool`. The default is `string`.<br> The display format of a column of type `number` can be specified by the property `number-format`.<br> The display format of a column of type `date` or `datetime` can be specified by the property `date-format` while `time` columns are always read formatted as `HH:mm`.<br> The display format of a column of type `enum` can be specified by the property `enum`.<br> The display format of a column of type `bool` can be specified by the property `bool`. **ET** determines if a value is boolean if it's equal to the one specified in the root-level `yes-format`             |
 | `hidden`        | `boolean` | If `true` the column won't be displayed.                                                                                                                                                                                                                                                                                                                                                                                               |
 | `nowrap`        | `boolean` | If `true`, applies [`white-space: nowrap`](https://developer.mozilla.org/en-US/docs/Web/CSS/white-space) to the column cells.                                                                                                                                                                                                                                                                                                          |
 | `number-format` | `string`  | How to format the numeric values of the column. It must be a string that defines options for Javascript's [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat).<br> Examples: <ul><li>`"style: 'currency', currency: 'JPY'"`</li><li>`"maximumSignificantDigits: 3"`</li></ul>                                                                                      |
@@ -159,11 +159,11 @@ All the column configuration properties are optional.
 
 ### TableManager Api
 
-The **Advanced table controls** plugin exposes a utility Api to work with markdown tables within a file. You can use it to program advanced integrations with custom tables, like buttons that change the table within a file.
+The **Enhanced tables** plugin exposes a utility Api to work with markdown tables within a file. You can use it to program advanced integrations with custom tables, like buttons that change the table within a file.
 
 All the functions of the Api assume that the target files only has one table and / or they work on the first table instance found (if any).
 
-A `Tablemanager` instance is exposed by the plugin and can be programmatically accessed via `app.plugins.plugin['advanced-table-controls'].tableManager`;
+A `Tablemanager` instance is exposed by the plugin and can be programmatically accessed via `app.plugins.plugin['enhanced-tables'].tableManager`;
 
 #### `Tablemanager`
 

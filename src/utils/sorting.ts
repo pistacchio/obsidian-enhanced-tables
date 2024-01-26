@@ -1,10 +1,10 @@
-import { AtcDataColumn } from 'src/utils/types';
+import { EtDataColumn } from 'src/utils/types';
 
 export type SortFunction = (a: any, b: any) => number;
 
 export function getSortingFunction(
   sortField: string,
-  columns: AtcDataColumn[],
+  columns: EtDataColumn[],
 ): SortFunction | null {
   const desc = sortField.startsWith('-');
   if (desc) {

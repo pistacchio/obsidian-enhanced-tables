@@ -7,14 +7,14 @@ If your plugin does not need CSS, delete this file.
 
 */
 
-.advanced-table-controls {
+.enhanced-tables {
   & .table-container {
     width: 100%;
     overflow-x: scroll;
   }
 }
 
-.advanced-table-controls-pagination {
+.enhanced-tables-pagination {
   display: flex;
   justify-content: space-between;
 
@@ -42,7 +42,7 @@ If your plugin does not need CSS, delete this file.
   }
 }
 
-.advanced-table-controls-controls {
+.enhanced-tables-controls {
   display: flex;
 
   & > div {
@@ -62,11 +62,11 @@ If your plugin does not need CSS, delete this file.
 }
 
 @media (max-width: 700px) {
-  .advanced-table-controls-controls {
+  .enhanced-tables-controls {
     flex-direction: column;
   }
 
-  .advanced-table-controls-pagination {
+  .enhanced-tables-pagination {
     & .pag-nav-dots,
     .pag-nav-page,
     .pag-nav-dots,
@@ -78,15 +78,15 @@ If your plugin does not need CSS, delete this file.
 }
 
 
-.advanced-table-controls-nowrap {
+.enhanced-tables-nowrap {
   white-space: nowrap !important;
 }
 
-.advanced-table-controls-fix-header {
+.enhanced-tables-fix-header {
   position: sticky;
   top: 0;
 }
 
-.advanced-table-controls-hidden {
+.enhanced-tables-hidden {
   display: none;
 }

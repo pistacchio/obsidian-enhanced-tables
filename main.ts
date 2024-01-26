@@ -1,8 +1,8 @@
 import { Plugin } from 'obsidian';
-import { getMountContext, mountAdvancedTableControls } from 'src/utils/mount';
+import { getMountContext, mountEnhancedTables } from 'src/utils/mount';
 import { TableManager } from 'src/TableManager';
 
-export default class AdvancedTableControlsPlugin extends Plugin {
+export default class EnhancedTablesPlugin extends Plugin {
   public tableManager = new TableManager();
 
   async onload() {
@@ -14,7 +14,7 @@ export default class AdvancedTableControlsPlugin extends Plugin {
           possibleMountContext;
 
         setTimeout(() => {
-          mountAdvancedTableControls(
+          mountEnhancedTables(
             this.app,
             yamlCodeEl,
             configuration,

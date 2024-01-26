@@ -1,6 +1,6 @@
-export const ATC_YAML_SIGNAL = '```yaml atc';
+export const ET_YAML_SIGNAL = '```yaml enhanced-table';
 
-export const ATC_RENDER_TABLE_ATTRIBUTE = 'data-atc-table';
+export const ET_RENDER_TABLE_ATTRIBUTE = 'data-et-table';
 
 export const DEFAULT_COLUMNS_TYPE = 'string';
 export const DEFAULT_NUMBER_FORMAT = {};

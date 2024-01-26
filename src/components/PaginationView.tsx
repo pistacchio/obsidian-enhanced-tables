@@ -105,7 +105,7 @@ export const PaginationView: React.FC<PaginationViewProps> = ({
 
   return (
     <Fragment>
-      <div className="advanced-table-controls-pagination">
+      <div className="enhanced-tables-pagination">
         <div className="d-flex flex-wrap py-2 mr-3 ">
           {totalNumberOfItems > pageSize && (
             <Fragment>

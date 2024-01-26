@@ -1,4 +1,4 @@
-import { AtcConfiguration, AtcDataCell } from 'src/utils/types';
+import { EtConfiguration, EtDataCell } from 'src/utils/types';
 import { moment } from 'obsidian';
 import {
   DEFAULT_BOOL_YES_INPUT,
@@ -7,8 +7,6 @@ import {
 } from 'src/utils/sharedConstants';
 
 const DOM_DATE_PICKER_FORMAT = 'YYYY-MM-DD';
-const DOM_TIME_PICKER_FORMAT = 'HH:mm';
-const DOM_DATETIME_PICKER_FORMAT = 'YYYY-MM-DDTHH:mm';
 
 const DATEPICKER_TYPES = {
   date: 'date',
@@ -55,8 +53,8 @@ function makeContainer(): HTMLDivElement {
 
 export function makeEditor(
   td: HTMLElement,
-  cell: AtcDataCell,
-  configuration: AtcConfiguration,
+  cell: EtDataCell,
+  configuration: EtConfiguration,
   onChange: (val: string) => void,
 ) {
   let type = cell.column.type;

@@ -7,7 +7,7 @@ export type CellValueFormatter = (cell: any, row: any, ctx: any) => any;
 
 // Configuration
 
-export type AtcConfigurationColumnType =
+export type EtConfigurationColumnType =
   | 'string'
   | 'number'
   | 'bool'
@@ -16,13 +16,13 @@ export type AtcConfigurationColumnType =
   | 'time'
   | 'enum';
 
-export type AtcConfigurationPagination = {
+export type EtConfigurationPagination = {
   'page-size': number;
   'page-sizes'?: number[];
 };
 
-export type AtcConfiguration = {
-  columns?: Record<string, AtcConfigurationColumn>;
+export type EtConfiguration = {
+  columns?: Record<string, EtConfigurationColumn>;
   editable?: boolean;
   'date-format'?: string;
   'datetime-format'?: string;
@@ -31,16 +31,16 @@ export type AtcConfiguration = {
   filter?: string;
   filters?: Record<string, string>;
   sort?: string;
-  pagination?: AtcConfigurationPagination;
+  pagination?: EtConfigurationPagination;
   'hide-controls': boolean;
   'hide-configuration': boolean;
   style?: string;
   'fix-header'?: boolean;
 };
 
-export type AtcConfigurationColumn = {
+export type EtConfigurationColumn = {
   alias?: string;
-  type?: AtcConfigurationColumnType;
+  type?: EtConfigurationColumnType;
   editable?: boolean;
   'date-format'?: string;
   'number-format'?: string;
@@ -59,8 +59,8 @@ export type Pagination = {
   pageSizes: number[];
 };
 
-export type AtcDataColumn = Omit<
-  AtcConfigurationColumn,
+export type EtDataColumn = Omit<
+  EtConfigurationColumn,
   | 'date-format'
   | 'bool'
   | 'yes-format'
@@ -78,17 +78,17 @@ export type AtcDataColumn = Omit<
   el: HTMLTableCellElement;
 };
 
-export type AtcDataCell = {
+export type EtDataCell = {
   el: HTMLTableCellElement;
-  column: AtcDataColumn;
+  column: EtDataColumn;
   rawValue: string;
   value: any;
   formattedValue: any;
 };
 
-export type AtcDataRow = {
+export type EtDataRow = {
   index: number;
   el: HTMLTableRowElement;
-  cells: Record<string, AtcDataCell>;
-  orderedCells: AtcDataCell[];
+  cells: Record<string, EtDataCell>;
+  orderedCells: EtDataCell[];
 } & Record<string, any>;

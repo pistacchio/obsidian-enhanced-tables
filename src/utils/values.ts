@@ -1,9 +1,9 @@
 import { moment } from 'obsidian';
-import { AtcDataColumn } from 'src/utils/types';
+import { EtDataColumn } from 'src/utils/types';
 
 export function extractValue(
   rawValue: string,
-  column: AtcDataColumn,
+  column: EtDataColumn,
   dateFormat: string,
   yesFormat: string,
 ): any {

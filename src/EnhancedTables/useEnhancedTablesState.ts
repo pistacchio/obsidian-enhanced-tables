@@ -1,9 +1,9 @@
 import {
-  AtcConfiguration,
-  AtcConfigurationColumn,
-  AtcDataCell,
-  AtcDataColumn,
-  AtcDataRow,
+  EtConfiguration,
+  EtConfigurationColumn,
+  EtDataCell,
+  EtDataColumn,
+  EtDataRow,
   Pagination,
   RawTableData,
 } from 'src/utils/types';
@@ -32,9 +32,9 @@ import { PaginationOptions } from 'src/components/PaginationView';
 import { App, MarkdownView } from 'obsidian';
 import { TableManager } from 'src/TableManager';
 
-export function useAdvancedTableControlsState(
+export function useEnhancedTablesState(
   app: App,
-  configuration: AtcConfiguration,
+  configuration: EtConfiguration,
   tableData: RawTableData,
 ) {
   const [sorting, setSorting] = useState<string | null>(
@@ -71,12 +71,12 @@ export function useAdvancedTableControlsState(
     setPagination((pagination) => ({ ...pagination, ...p }) as Pagination);
   }, []);
 
-  const indexedColumns = useMemo<AtcDataColumn[]>(() => {
-    const indexedColumns: AtcDataColumn[] = tableData.columns.map(
+  const indexedColumns = useMemo<EtDataColumn[]>(() => {
+    const indexedColumns: EtDataColumn[] = tableData.columns.map(
       (columnName, index) => {
         const name = columnName;
         const columnConfiguration = (configuration.columns?.[name] ??
-          {}) as AtcConfigurationColumn;
+          {}) as EtConfigurationColumn;
 
         const { formatter, ...columnConfigurationData } = columnConfiguration;
 
@@ -112,7 +112,7 @@ export function useAdvancedTableControlsState(
             columnConfigurationData['yes-format'] ?? DEFAULT_BOOL_YES_FORMAT,
           noFormat:
             columnConfigurationData['no-format'] ?? DEFAULT_BOOL_NO_FORMAT,
-        } as unknown as AtcDataColumn;
+        } as unknown as EtDataColumn;
 
         columnData.formatter = makeFormatterForColumn(columnData, formatter);
 
@@ -121,15 +121,15 @@ export function useAdvancedTableControlsState(
     );
 
     return indexedColumns;
-  }, [tableData.columns, configuration.columns]);
+  }, [tableData.columns, configuration.columns, configuration.editable]);
 
-  const rows = useMemo<AtcDataRow[]>(() => {
+  const rows = useMemo<EtDataRow[]>(() => {
     const dateFormat = configuration['date-format'] ?? DEFAULT_DATE_FORMAT;
     const datetimeFormat =
       configuration['datetime-format'] ?? DEFAULT_DATE_TIME_FORMAT;
     const yesFormat = configuration['yes-format'] ?? DEFAULT_BOOL_YES_INPUT;
 
-    let rows: AtcDataRow[] = [];
+    let rows: EtDataRow[] = [];
 
     const currentContent =
       app.workspace.getActiveViewOfType(MarkdownView)?.data ?? '';
@@ -137,7 +137,7 @@ export function useAdvancedTableControlsState(
     const rawTableLines = tableManager.readTableLines(currentContent);
 
     rows = tableData.rows.map((cells, rowIdx) => {
-      let orderedCells: AtcDataCell[] = cells.map((cellContent, cellIdx) => {
+      let orderedCells: EtDataCell[] = cells.map((cellContent, cellIdx) => {
         const dateFieldFormat = (() => {
           if (indexedColumns[cellIdx].type === 'time') {
             return DEFAULT_TIME_FORMAT;
@@ -159,7 +159,7 @@ export function useAdvancedTableControlsState(
           column: indexedColumns[cellIdx],
           rawValue: rawTableLines?.[rowIdx + 2]?.[cellIdx] ?? '',
           value,
-        } as AtcDataCell;
+        } as EtDataCell;
       });
 
       const allCells = Object.fromEntries(
@@ -178,7 +178,7 @@ export function useAdvancedTableControlsState(
         index: rowIdx,
         orderedCells,
         ...allCells,
-      } as AtcDataRow;
+      } as EtDataRow;
     });
 
     // Sorting

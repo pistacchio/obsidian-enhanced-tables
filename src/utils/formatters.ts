@@ -1,7 +1,7 @@
-import { AtcDataColumn, CellValueFormatter } from 'src/utils/types';
+import { EtDataColumn, CellValueFormatter } from 'src/utils/types';
 
 export function makeFormatterForColumn(
-  column: AtcDataColumn,
+  column: EtDataColumn,
   formatter?: string,
 ): CellValueFormatter {
   if (formatter) {

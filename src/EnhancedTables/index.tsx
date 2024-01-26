@@ -1,21 +1,21 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { AtcConfiguration, RawTableData } from 'src/utils/types';
-import { useAdvancedTableControlsState } from 'src/AdvancedTableControls/useAdvancedTableControlsState';
+import { EtConfiguration, RawTableData } from 'src/utils/types';
+import { useEnhancedTablesState } from 'src/EnhancedTables/useEnhancedTablesState';
 import { PaginationView } from 'src/components/PaginationView';
 import { ControlsView } from 'src/components/Controls';
 import { App, MarkdownView } from 'obsidian';
 import { TableManager } from 'src/TableManager';
-import { makeEditor } from 'src/AdvancedTableControls/editors';
+import { makeEditor } from 'src/EnhancedTables/editors';
 
 import * as css from 'css';
 
-type AdvancedTableControlsProps = {
+type EnhancedTablesProps = {
   app: App;
-  configuration: AtcConfiguration;
+  configuration: EtConfiguration;
   tableData: RawTableData;
 };
 
-export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
+export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
   app,
   configuration,
   tableData,
@@ -35,7 +35,7 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
 
     sorting,
     setSorting,
-  } = useAdvancedTableControlsState(app, configuration, tableData);
+  } = useEnhancedTablesState(app, configuration, tableData);
 
   // Escape from React logic in order to be abel to use `HTMLElement.appendChild()` and
   // hence handle advanced formatters that return HTML elements
@@ -62,7 +62,7 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
           tr.setAttribute('data-atc-row-cell', `${row.index}-${idx2}`);
 
           if (cell.column.nowrap) {
-            td.className = 'advanced-table-controls-nowrap';
+            td.className = 'enhanced-tables-nowrap';
           }
 
           // If the formatter function returns a HTML element, use it as-is
@@ -106,7 +106,7 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
   }, [app.workspace, configuration, rows]);
 
   // If the user defined a custom make, try to make it scoped to the class
-  // advanced-table-controls
+  // enhanced-tables
   const style = useMemo<string | undefined>(() => {
     if (!configuration.style) {
       return undefined;
@@ -119,17 +119,17 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
       });
 
       return `
-        .advanced-table-controls {
+        .enhanced-tables {
           ${css.stringify(customCss)}
         }
       `;
     } catch (e) {
       return undefined;
     }
-  }, []);
+  }, [configuration.style]);
 
   return (
-    <div className="advanced-table-controls">
+    <div className="enhanced-tables">
       {style && <style>{style}</style>}
 
       {!configuration['hide-controls'] && (
@@ -152,7 +152,7 @@ export const AdvancedTableControls: React.FC<AdvancedTableControlsProps> = ({
                 .map((c, idx) => (
                   <th
                     key={idx}
-                    className={`${c.nowrap ? 'advanced-table-controls-nowrap' : ''} ${configuration['fix-header'] ? 'advanced-table-controls-fix-header' : ''}`}
+                    className={`${c.nowrap ? 'enhanced-tables-nowrap' : ''} ${configuration['fix-header'] ? 'enhanced-tables-fix-header' : ''}`}
                     dangerouslySetInnerHTML={{ __html: c.name }}
                   />
                 ))}
