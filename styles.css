@@ -68,12 +68,11 @@ If your plugin does not need CSS, delete this file.
 
   .enhanced-tables-pagination {
     & .pag-nav-dots,
-    .pag-nav-page,
-    .pag-nav-dots,
-    select {
+    & .pag-nav-page,
+    & .pag-nav-dots,
+    & select {
       display: none;
     }
-
   }
 }
 
