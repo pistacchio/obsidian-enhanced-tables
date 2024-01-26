@@ -28,7 +28,7 @@ import {
 import { extractValue } from 'src/utils/values';
 import { getSortingFunction } from 'src/utils/sorting';
 
-import { PaginationOptions } from 'src/components/PaginationView';
+import { PaginationOptions } from 'src/EnhancedTables/components/PaginationView';
 import { App, MarkdownView } from 'obsidian';
 import { TableManager } from 'src/TableManager';
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { EtConfiguration, RawTableData } from 'src/utils/types';
 import { useEnhancedTablesState } from 'src/EnhancedTables/useEnhancedTablesState';
-import { PaginationView } from 'src/components/PaginationView';
-import { ControlsView } from 'src/components/Controls';
+import { PaginationView } from 'src/EnhancedTables/components/PaginationView';
+import { ControlsView } from 'src/EnhancedTables/components/Controls';
 import { App, MarkdownView } from 'obsidian';
 import { TableManager } from 'src/TableManager';
 import { makeEditor } from 'src/EnhancedTables/editors';
