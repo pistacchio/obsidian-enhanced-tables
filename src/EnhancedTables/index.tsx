@@ -48,7 +48,7 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
 
     rows.forEach((row) => {
       const tr = document.createElement('tr');
-      tr.setAttribute('data-atc-row', row.index.toString());
+      tr.setAttribute('data-et-row', row.index.toString());
 
       const currentContent =
         app.workspace.getActiveViewOfType(MarkdownView)?.data ?? '';
@@ -58,8 +58,8 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
         .filter((c) => !c.column.hidden)
         .forEach((cell, idx2) => {
           const td = document.createElement('td');
-          tr.setAttribute('data-atc-cell', idx2.toString());
-          tr.setAttribute('data-atc-row-cell', `${row.index}-${idx2}`);
+          tr.setAttribute('data-et-cell', idx2.toString());
+          tr.setAttribute('data-et-row-cell', `${row.index}-${idx2}`);
 
           if (cell.column.nowrap) {
             td.className = 'enhanced-tables-nowrap';
