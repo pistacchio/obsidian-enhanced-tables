@@ -101,6 +101,16 @@ If your plugin does not need CSS, delete this file.
   display: none;
 }
 
+
+.enhanced-tables-error {
+  color: var(--text-error);
+}
+
+.enhanced-tables-errors {
+  margin-bottom: 1.5em;
+}
+
+
 @media (max-width: 700px) {
   .enhanced-tables-controls {
     flex-direction: column;

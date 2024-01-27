@@ -7,13 +7,19 @@ import { EtConfiguration, RawTableData } from 'src/utils/types';
 import { EnhancedTables } from 'src/EnhancedTables';
 import { createRoot } from 'react-dom/client';
 import React from 'react';
+import { validateConfiguration } from 'src/utils/validation';
+
+export type MountContext = [
+  HTMLElement,
+  EtConfiguration,
+  HTMLTableElement,
+  RawTableData,
+];
 
 export async function getMountContext(
   element: HTMLElement,
   ctx: MarkdownPostProcessorContext,
-): Promise<
-  [HTMLElement, EtConfiguration, HTMLTableElement, RawTableData] | null
-> {
+): Promise<MountContext | null | string> {
   // The timeout is necessary to give Obsidian time to render the whole page
   // or else it would be impossible to find the table (since that would not
   // have been rendered yet(
@@ -50,10 +56,26 @@ export async function getMountContext(
         return resolve(null);
       }
 
-      const configuration = extractYamlCodeFromTheCodeBlock(yamlCodeEl, ctx);
+      const configurationString = extractYamlCodeFromTheCodeBlock(
+        yamlCodeEl,
+        ctx,
+      );
 
-      if (!configuration) {
+      if (!configurationString) {
         return resolve(null);
+      }
+
+      let configuration: EtConfiguration;
+      try {
+        configuration = parseYaml(configurationString);
+      } catch (e) {
+        return resolve('Cannot parse the yaml configuration');
+      }
+
+      const validOrValidationMessage = validateConfiguration(configuration);
+
+      if (validOrValidationMessage !== true) {
+        return resolve(validOrValidationMessage);
       }
 
       const tableData = extractRawTableData(tableEl);
@@ -73,8 +95,6 @@ export function mountEnhancedTables(
   Array.from(
     document.querySelectorAll(`div[${ET_RENDER_TABLE_ATTRIBUTE}]`),
   ).forEach((e) => e.remove());
-
-  console.log('HEER');
 
   const rootElement = document.createElement('div');
   rootElement.setAttribute(ET_RENDER_TABLE_ATTRIBUTE, 'true');
@@ -97,7 +117,7 @@ export function mountEnhancedTables(
 function extractYamlCodeFromTheCodeBlock(
   yamlCodeEl: HTMLElement,
   ctx: MarkdownPostProcessorContext,
-): EtConfiguration | null {
+): string | null {
   try {
     const sectionInfo = ctx.getSectionInfo(yamlCodeEl);
     const pageLines = sectionInfo?.text.split('\n');
@@ -110,11 +130,9 @@ function extractYamlCodeFromTheCodeBlock(
       ?.slice(sectionInfo!.lineStart + 1, sectionInfo?.lineEnd)
       ?.join('\n');
 
-    const yamlObj = yamlCode ? parseYaml(yamlCode) : null;
-
-    return yamlObj as EtConfiguration;
+    return yamlCode ?? null;
   } catch (e) {
-    console.error('Cannot parse the yaml configuration');
+    console.error('Cannot get the yaml configuration');
     console.error(e);
     return null;
   }
