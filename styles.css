@@ -61,22 +61,6 @@ If your plugin does not need CSS, delete this file.
   }
 }
 
-@media (max-width: 700px) {
-  .enhanced-tables-controls {
-    flex-direction: column;
-  }
-
-  .enhanced-tables-pagination {
-    & .pag-nav-dots,
-    & .pag-nav-page,
-    & .pag-nav-dots,
-    & select {
-      display: none;
-    }
-  }
-}
-
-
 .enhanced-tables-nowrap {
   white-space: nowrap !important;
 }
@@ -88,4 +72,24 @@ If your plugin does not need CSS, delete this file.
 
 .enhanced-tables-hidden {
   display: none;
+}
+
+@media (max-width: 700px) {
+  .enhanced-tables-controls {
+    flex-direction: column;
+    margin-bottom: 1em;
+  }
+
+  .enhanced-tables-pagination {
+    margin-top: 1em;
+
+    & .pag-nav-dots,
+    & .pag-nav-page,
+    & .pag-nav-dots,
+    & select {
+      display: none;
+    }
+
+  }
+
 }
