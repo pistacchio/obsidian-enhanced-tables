@@ -1,6 +1,8 @@
 # Enhanced tables
 
-A plugin for [Obsidian](https://obsidian.md/) to add advanced controls (like sorting, filtering and pagination) to standard markup tables
+A plugin for [Obsidian](https://obsidian.md/) to add advanced controls (like sorting, filtering and pagination) to standard markup tables.
+
+Its is heavily inspired by [DataLoom](https://dataloom.xyz/) which is an incredible plugin, but I wanted my data to be stored in simple, easily accessible and editable tables, and not in JSON files which integrate in a less seamless way into the Obsidian workflow. 
 
 ## Example
 
