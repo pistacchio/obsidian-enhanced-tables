@@ -23,13 +23,8 @@ const DOM_DATE_FORMATS = {
 function makeButton(text: string, onClick: () => void): HTMLButtonElement {
   const button = document.createElement('button');
   button.innerHTML = text;
+  button.className = 'editor-button';
 
-  button.style.fontSize = 'var(--font-smallest)';
-  button.style.height = '20px';
-  button.style.padding = '3px';
-  button.style.padding = '3px';
-
-  button.style.marginRight = '5px';
   button.addEventListener('click', (evt) => {
     evt.stopPropagation();
     evt.preventDefault();
@@ -41,12 +36,7 @@ function makeButton(text: string, onClick: () => void): HTMLButtonElement {
 
 function makeContainer(): HTMLDivElement {
   const container = document.createElement('div');
-
-  container.style.display = 'flex';
-  container.style.alignItems = 'center';
-  container.style.alignContent = 'center';
-  container.style.justifyContent = 'center';
-  container.style.justifyItems = 'center';
+  container.className = 'editor-container';
 
   return container;
 }
@@ -87,7 +77,7 @@ export function makeEditor(
         const cancelButton = makeButton('Cancel', () => {
           onChange(currentValue);
         });
-        cancelButton.style.marginRight = '5px';
+        cancelButton.classList.add('editor-mr-5');
 
         // Ok button
         const okButton = makeButton('Done', () => {
@@ -102,7 +92,7 @@ export function makeEditor(
 
         buttonsContainer.appendChild(cancelButton);
         buttonsContainer.appendChild(okButton);
-        buttonsContainer.style.marginTop = '1em';
+        buttonsContainer.classList.add('editor-mt-1em');
 
         // Mount the components
         td.appendChild(editor);
@@ -170,12 +160,12 @@ export function makeEditor(
         const cancelButton = makeButton('Cancel', () => {
           onChange(currentValue);
         });
-        cancelButton.style.marginRight = '5px';
+        cancelButton.classList.add('editor-mr-5');
 
         // Buttons strip
         const buttonsContainer = document.createElement('div');
         buttonsContainer.appendChild(cancelButton);
-        buttonsContainer.style.marginTop = '1em';
+        buttonsContainer.classList.add('editor-mt-1em');
 
         // Mount the components
         td.appendChild(datePickerContainer);
@@ -223,12 +213,12 @@ export function makeEditor(
         const cancelButton = makeButton('Cancel', () => {
           onChange(currentValue);
         });
-        cancelButton.style.marginRight = '5px';
+        cancelButton.classList.add('editor-mr-5');
 
         // Buttons strip
         const buttonsContainer = document.createElement('div');
         buttonsContainer.appendChild(cancelButton);
-        buttonsContainer.style.marginTop = '1em';
+        buttonsContainer.classList.add('editor-mt-1em');
 
         // Mount the components
         td.appendChild(selectContainer);
@@ -267,12 +257,12 @@ export function makeEditor(
         const cancelButton = makeButton('Cancel', () => {
           onChange(currentValue);
         });
-        cancelButton.style.marginRight = '5px';
+        cancelButton.classList.add('editor-mr-5');
 
         // Buttons strip
         const buttonsContainer = document.createElement('div');
         buttonsContainer.appendChild(cancelButton);
-        buttonsContainer.style.marginTop = '1em';
+        buttonsContainer.classList.add('editor-mt-1em');
 
         // Mount the components
         td.appendChild(checkboxContainer);

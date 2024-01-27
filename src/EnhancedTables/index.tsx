@@ -95,6 +95,7 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
 
           if (cell.column.editable) {
             makeEditor(td, cell, configuration, onValueChange);
+            td.classList.add('editor-cursor-pointer');
             td.style.cursor = 'pointer';
           }
 

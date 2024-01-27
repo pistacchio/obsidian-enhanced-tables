@@ -12,6 +12,33 @@ If your plugin does not need CSS, delete this file.
     width: 100%;
     overflow-x: scroll;
   }
+
+  & .editor-button {
+    font-size: var(--font-smallest);
+    height: 20px;
+    padding: 3px;
+    margin-right: 5px;
+  }
+
+  & .editor-container {
+    display : flex;
+    align-items : center;
+    align-content : center;
+    justify-content : center;
+    justify-items : center;
+  }
+
+  & .editor-mr-5 {
+    margin-right: 5px;
+  }
+
+  & .editor-mt-1em {
+    margin-top: 1em;
+  }
+
+  & .editor-cursor-pointer {
+    cursor: pointer;
+  }
 }
 
 .enhanced-tables-pagination {
