@@ -44,7 +44,7 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
       return;
     }
 
-    tbodyRef.current!.innerHTML = '';
+    tbodyRef.current!.textContent = '';
 
     rows.forEach((row) => {
       const tr = document.createElement('tr');
@@ -96,7 +96,6 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
           if (cell.column.editable) {
             makeEditor(td, cell, configuration, onValueChange);
             td.classList.add('editor-cursor-pointer');
-            td.style.cursor = 'pointer';
           }
 
           tr.appendChild(td);

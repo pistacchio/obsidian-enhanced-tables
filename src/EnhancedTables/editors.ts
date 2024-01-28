@@ -20,10 +20,16 @@ const DOM_DATE_FORMATS = {
   time: 'HH:mm',
 };
 
-function makeButton(text: string, onClick: () => void): HTMLButtonElement {
-  const button = document.createElement('button');
-  button.innerHTML = text;
-  button.className = 'editor-button';
+function makeButton(
+  parent: Element,
+  text: string,
+  onClick: () => void,
+  className?: string,
+): HTMLButtonElement {
+  const button = parent.createEl('button', {
+    text,
+    cls: `editor-button ${className ?? ''}`,
+  });
 
   button.addEventListener('click', (evt) => {
     evt.stopPropagation();
@@ -66,33 +72,34 @@ export function makeEditor(
       // On click, turn the cell into an editable one
       const onClickHandler = () => {
         td.removeEventListener('click', onClickHandler);
-        td.innerHTML = '';
+        td.textContent = '';
 
         // Editor
         editor = document.createElement('div');
         editor.innerHTML = cell.rawValue;
         editor.setAttribute('contenteditable', 'true');
 
+        // Buttons strip
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.classList.add('editor-mt-1em');
+
         // Cancel button
-        const cancelButton = makeButton('Cancel', () => {
-          onChange(currentValue);
-        });
-        cancelButton.classList.add('editor-mr-5');
+        makeButton(
+          buttonsContainer,
+          'Cancel',
+          () => {
+            onChange(currentValue);
+          },
+          'editor-mr-5',
+        );
 
         // Ok button
-        const okButton = makeButton('Done', () => {
+        makeButton(buttonsContainer, 'Done', () => {
           if (cell.column.type === 'number') {
             editor.innerHTML = editor.innerHTML.replace(/[^0-9]/g, '');
           }
           onChange(editor.innerHTML);
         });
-
-        // Buttons strip
-        const buttonsContainer = document.createElement('div');
-
-        buttonsContainer.appendChild(cancelButton);
-        buttonsContainer.appendChild(okButton);
-        buttonsContainer.classList.add('editor-mt-1em');
 
         // Mount the components
         td.appendChild(editor);
@@ -139,7 +146,11 @@ export function makeEditor(
 
       const onClickHandler = () => {
         td.removeEventListener('click', onClickHandler);
-        td.innerHTML = '';
+        td.textContent = '';
+
+        // Buttons strip
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.classList.add('editor-mt-1em');
 
         // Datepicker
         const datePickerContainer = makeContainer();
@@ -157,15 +168,16 @@ export function makeEditor(
         datePickerContainer.appendChild(datePicker);
 
         // Cancel button
-        const cancelButton = makeButton('Cancel', () => {
-          onChange(currentValue);
-        });
-        cancelButton.classList.add('editor-mr-5');
+        makeButton(
+          buttonsContainer,
+          'Cancel',
+          () => {
+            onChange(currentValue);
+          },
+          'editor-mr-5',
+        );
 
         // Buttons strip
-        const buttonsContainer = document.createElement('div');
-        buttonsContainer.appendChild(cancelButton);
-        buttonsContainer.classList.add('editor-mt-1em');
 
         // Mount the components
         td.appendChild(datePickerContainer);
@@ -181,7 +193,7 @@ export function makeEditor(
 
       const onClickHandler = () => {
         td.removeEventListener('click', onClickHandler);
-        td.innerHTML = '';
+        td.textContent = '';
 
         // Select
         const selectContainer = makeContainer();
@@ -209,16 +221,19 @@ export function makeEditor(
           select.appendChild(option);
         }
 
-        // Cancel button
-        const cancelButton = makeButton('Cancel', () => {
-          onChange(currentValue);
-        });
-        cancelButton.classList.add('editor-mr-5');
-
         // Buttons strip
         const buttonsContainer = document.createElement('div');
-        buttonsContainer.appendChild(cancelButton);
         buttonsContainer.classList.add('editor-mt-1em');
+
+        // Cancel button
+        makeButton(
+          buttonsContainer,
+          'Cancel',
+          () => {
+            onChange(currentValue);
+          },
+          'editor-mr-5',
+        );
 
         // Mount the components
         td.appendChild(selectContainer);
@@ -234,7 +249,7 @@ export function makeEditor(
 
       const onClickHandler = () => {
         td.removeEventListener('click', onClickHandler);
-        td.innerHTML = '';
+        td.textContent = '';
 
         // Checkbox
         const checkboxContainer = makeContainer();
@@ -253,16 +268,19 @@ export function makeEditor(
 
         checkboxContainer.appendChild(checkbox);
 
-        // Cancel button
-        const cancelButton = makeButton('Cancel', () => {
-          onChange(currentValue);
-        });
-        cancelButton.classList.add('editor-mr-5');
-
         // Buttons strip
         const buttonsContainer = document.createElement('div');
-        buttonsContainer.appendChild(cancelButton);
         buttonsContainer.classList.add('editor-mt-1em');
+
+        // Cancel button
+        makeButton(
+          buttonsContainer,
+          'Cancel',
+          () => {
+            onChange(currentValue);
+          },
+          'editor-mr-5',
+        );
 
         // Mount the components
         td.appendChild(checkboxContainer);
