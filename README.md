@@ -163,8 +163,6 @@ All the column configuration properties are optional.
 
 The **Enhanced tables** plugin exposes a utility Api to work with markdown tables within a file. You can use it to program advanced integrations with custom tables, like buttons that change the table within a file.
 
-All the functions of the Api assume that the target files only has one table and / or they work on the first table instance found (if any).
-
 A `Tablemanager` instance is exposed by the plugin and can be programmatically accessed via `app.plugins.plugin['enhanced-tables'].tableManager`;
 
 #### `Tablemanager`
@@ -183,31 +181,34 @@ The class exposes the following methods:
 //   `lineNo` = n = nth line
 //   `lineNo` = -1 = last line
 
-// In all the followin methods `fileContent: string` is typically the content of the current file
+// In all the following methods `fileContent: string` is typically the content of the current file
 // accessible with `this.app.workspace.getActiveViewOfType(MarkdownView)?.data` or the content
 // of a file got with `this.app.vault.read()`
 
+// In all the following methods `tableIndex: number = 0`  is the optional index of the table in the file
+// if a file has multiple tables in it. `0` is the first column, `1` the second and so on. 
+
 // Insert the new table line represented by `values` into the provided fileContent at position `lineNo`.
 //   Return the modified file content
-function insertLine(fileContent: string, lineNo: number, values: LineValues): string {}
+function insertLine(fileContent: string, lineNo: number, values: LineValues, tableIndex = 0): string {}
 
 // Replace the table line at position `lineNo` in the provided fileContent with
 //   a new table line represented by `values`
 //   Return the modified file content
-function modifyLine(fileContent: string, lineNo: number, values: LineValues): string {}
+function modifyLine(fileContent: string, lineNo: number, values: LineValues, tableIndex = 0): string {}
 
 // Replace the header of the table in the provided fileContent with
 //   a new table header represented by `values`
 //   Return the modified file content
-function modifyHeader(fileContent: string, values: LineValues): string {}
+function modifyHeader(fileContent: string, values: LineValues, tableIndex = 0): string {}
 
 // Delete the table line at position `lineNo` in the provided fileContent with
 //   Return the modified file content
-function removeLine(fileContent: string, lineNo: number): string {}
+function removeLine(fileContent: string, lineNo: number, tableIndex = 0): string {}
 
 // Returns the values of the table line at position `lineNo` in the provided fileContent with
-function readLine(fileContent: string, lineNo: number): LineValues| null {}
+function readLine(fileContent: string, lineNo: number, tableIndex = 0): LineValues| null {}
 
 // Returns all the values of the table in the provided fileContent with
-function readTableLines(fileContent: string): LineValues | null {}
+function readTableLines(fileContent: string, tableIndex = 0): LineValues | null {}
 ```

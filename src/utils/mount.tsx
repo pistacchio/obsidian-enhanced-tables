@@ -1,5 +1,6 @@
 import { App, MarkdownPostProcessorContext, parseYaml } from 'obsidian';
 import {
+  ET_CONFIGURATION_CODE_ATTRIBUTE,
   ET_RENDER_TABLE_ATTRIBUTE,
   ET_YAML_SIGNAL,
 } from 'src/utils/sharedConstants';
@@ -14,6 +15,7 @@ export type MountContext = [
   EtConfiguration,
   HTMLTableElement,
   RawTableData,
+  number,
 ];
 
 export async function getMountContext(
@@ -80,7 +82,20 @@ export async function getMountContext(
 
       const tableData = extractRawTableData(tableEl);
 
-      return resolve([yamlCodeEl, configuration, tableEl, tableData]);
+      // If there are multiple Enhanced Tables declared in the page, found out if this
+      // is the first one, the second one and so on.
+      const indexOfTheEnhancedTable = Array.from(
+        document.querySelectorAll('code'),
+      ).indexOf(yamlCodeEl);
+      element.setAttribute(ET_CONFIGURATION_CODE_ATTRIBUTE, '1');
+
+      return resolve([
+        yamlCodeEl,
+        configuration,
+        tableEl,
+        tableData,
+        indexOfTheEnhancedTable,
+      ]);
     }, 0);
   });
 }
@@ -91,13 +106,19 @@ export function mountEnhancedTables(
   configuration: EtConfiguration,
   tableEl: HTMLTableElement,
   tableData: RawTableData,
+  indexOfTheEnhancedTable: number,
 ) {
   Array.from(
-    document.querySelectorAll(`div[${ET_RENDER_TABLE_ATTRIBUTE}]`),
+    document.querySelectorAll(
+      `div[${ET_RENDER_TABLE_ATTRIBUTE}="${indexOfTheEnhancedTable}"]`,
+    ),
   ).forEach((e) => e.remove());
 
   const rootElement = document.createElement('div');
-  rootElement.setAttribute(ET_RENDER_TABLE_ATTRIBUTE, 'true');
+  rootElement.setAttribute(
+    ET_RENDER_TABLE_ATTRIBUTE,
+    indexOfTheEnhancedTable.toString(),
+  );
   tableEl.after(rootElement);
   tableEl.className = 'enhanced-tables-hidden';
 
@@ -110,6 +131,7 @@ export function mountEnhancedTables(
       app={app}
       configuration={configuration}
       tableData={tableData}
+      indexOfTheEnhancedTable={indexOfTheEnhancedTable}
     />,
   );
 }

@@ -35,6 +35,7 @@ import { TableManager } from 'src/TableManager';
 export function useEnhancedTablesState(
   app: App,
   configuration: EtConfiguration,
+  indexOfTheEnhancedTable: number,
   tableData: RawTableData,
 ) {
   const [sorting, setSorting] = useState<string | null>(
@@ -134,7 +135,10 @@ export function useEnhancedTablesState(
     const currentContent =
       app.workspace.getActiveViewOfType(MarkdownView)?.data ?? '';
     const tableManager = new TableManager();
-    const rawTableLines = tableManager.readTableLines(currentContent);
+    const rawTableLines = tableManager.readTableLines(
+      currentContent,
+      indexOfTheEnhancedTable,
+    );
 
     rows = tableData.rows.map((cells, rowIdx) => {
       let orderedCells: EtDataCell[] = cells.map((cellContent, cellIdx) => {

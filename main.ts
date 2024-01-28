@@ -37,8 +37,13 @@ export default class EnhancedTablesPlugin extends Plugin {
         return;
       }
 
-      const [yamlCodeEl, configuration, tableEl, tableData] =
-        possibleMountContext as MountContext;
+      const [
+        yamlCodeEl,
+        configuration,
+        tableEl,
+        tableData,
+        indexOfTheEnhancedTable,
+      ] = possibleMountContext as MountContext;
 
       setTimeout(() => {
         mountEnhancedTables(
@@ -47,6 +52,7 @@ export default class EnhancedTablesPlugin extends Plugin {
           configuration,
           tableEl,
           tableData,
+          indexOfTheEnhancedTable,
         );
       }, 300);
     }, 1);

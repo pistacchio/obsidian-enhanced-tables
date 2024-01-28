@@ -1,83 +1,86 @@
+import { isBlockScopeBoundary } from 'tsutils';
+
 const SUB_HEADER_LINE_REGEX = /^\|\s*-[-\s|]*?-\s*\|$/gm;
 const LINE_REGEX = /^\|.*?\|$/gm;
 
 export type LineValues = string[];
+type BlockOfText = {
+  type: 'text' | 'table';
+  lines: string[];
+};
 
 class TableDocument {
-  tableLines: string[] = [];
-  contentBeforeTable: string = '';
-  contentAfterTable: string = '';
-  foundTable: boolean = false;
+  blocks: BlockOfText[];
 
   constructor(fileContent: string) {
-    const tableDocument = TableDocument.documentToTable(fileContent);
-    if (!tableDocument) {
-      return;
-    }
-
-    const [contentBeforeTable, tableLines, contentAfterTable] = tableDocument;
-
-    this.tableLines = tableLines;
-    this.contentBeforeTable = contentBeforeTable;
-    this.contentAfterTable = contentAfterTable;
-
-    this.foundTable = true;
+    this.blocks = TableDocument.documentToBlocks(fileContent);
   }
 
   public toString() {
-    return `${this.contentBeforeTable}\n${this.tableLines.join('\n')}\n${this.contentAfterTable}`;
+    return this.blocks.flatMap((b) => b.lines).join('\n');
   }
 
-  private static documentToTable(
-    fileContent: string,
-  ): [string, string[], string] | null {
+  public getTable(index: number) {
+    return this.blocks.filter((b) => b.type === 'table')[index];
+  }
+
+  public hasTables() {
+    return this.blocks.some((b) => b.type === 'table');
+  }
+
+  private static documentToBlocks(fileContent: string): BlockOfText[] {
     const lines = fileContent.split('\n');
 
-    let startingLine: number | null = null;
-    let endLine: number | null = null;
+    const blocksOfText: BlockOfText[] = [];
+    let currentBlockOfText: BlockOfText | null = null;
 
     for (let lineNo = 0; lineNo < lines.length; lineNo++) {
       const line = lines[lineNo];
 
-      // If a table first line hasn't been found yet, check if the line is a header-type
-      // line and save its index
-      if (startingLine === null && line.match(LINE_REGEX)) {
-        startingLine = lineNo;
-        continue;
-      }
-
-      // If this is the line after a table first line, check if it matches the expected
-      // format (that is like | ---- | ---- |) or reset the found first line
+      // Check if the current line is the beginning of a line table
       if (
-        startingLine !== null &&
-        lineNo === startingLine + 1 &&
-        !line.match(SUB_HEADER_LINE_REGEX)
+        line.match(LINE_REGEX) &&
+        lines[lineNo + 1]?.match(SUB_HEADER_LINE_REGEX)
       ) {
-        startingLine = null;
+        // Archive the eventual previous block of code;
+        if (currentBlockOfText) {
+          blocksOfText.push(currentBlockOfText);
+        }
+
+        currentBlockOfText = { lines: [line], type: 'table' };
+
         continue;
       }
 
-      // If we are within a table context but the current line is not a table line,
-      // return the table lines
-      if (startingLine !== null) {
-        if (!line.match(LINE_REGEX)) {
-          endLine = lineNo;
-          break;
+      // The current line is not the beginning of a table. If we are adding a table,
+      // add the line if it is a table line or close the block of text and start a text
+      // one
+      if (currentBlockOfText?.type === 'table') {
+        if (line.match(LINE_REGEX)) {
+          currentBlockOfText.lines.push(line);
+          continue;
         }
+
+        blocksOfText.push(currentBlockOfText);
+
+        currentBlockOfText = { lines: [line], type: 'text' };
+        continue;
       }
+
+      // Not adding a table. Just add the current like
+      if (!currentBlockOfText) {
+        currentBlockOfText = { lines: [], type: 'text' };
+      }
+
+      currentBlockOfText.lines.push(line);
     }
 
-    // All the lines scanned. If a table has been found, return all the lines from the
-    // firs one to the last one.
-    if (startingLine !== null) {
-      return [
-        lines.slice(0, startingLine).join('\n'),
-        lines.slice(startingLine, endLine ?? undefined),
-        endLine ? lines.slice(endLine).join('\n') : '',
-      ];
+    // All lines scanned. Add the current block
+    if (currentBlockOfText) {
+      blocksOfText.push(currentBlockOfText);
     }
 
-    return null;
+    return blocksOfText;
   }
 }
 
@@ -86,20 +89,27 @@ export class TableManager {
     fileContent: string,
     lineNo: number,
     values: LineValues,
+    tableIndex: number = 0,
   ): string {
     const tableDocument = new TableDocument(fileContent);
 
-    if (!tableDocument.foundTable) {
+    if (!tableDocument.hasTables()) {
+      return fileContent;
+    }
+
+    const tableBlock = tableDocument.getTable(tableIndex);
+
+    if (!tableBlock) {
       return fileContent;
     }
 
     let targetLineNo = lineNo + 2;
     // Line number -1 is to be considered "last line"
     if (lineNo === -1) {
-      targetLineNo = tableDocument.tableLines.length;
+      targetLineNo = tableBlock.lines.length;
     }
 
-    tableDocument.tableLines.splice(targetLineNo, 0, this.valuesToLine(values));
+    tableBlock.lines.splice(targetLineNo, 0, this.valuesToLine(values));
 
     return tableDocument.toString();
   }
@@ -108,64 +118,95 @@ export class TableManager {
     fileContent: string,
     lineNo: number,
     values: LineValues,
+    tableIndex: number = 0,
   ): string {
     const tableDocument = new TableDocument(fileContent);
 
-    if (!tableDocument.foundTable) {
+    if (!tableDocument.hasTables()) {
+      return fileContent;
+    }
+
+    const tableBlock = tableDocument.getTable(tableIndex);
+
+    if (!tableBlock) {
       return fileContent;
     }
 
     let targetLineNo = lineNo + 2;
     // Line number -1 is to be considered "last line"
     if (lineNo === -1) {
-      targetLineNo = tableDocument.tableLines.length;
+      targetLineNo = tableBlock.lines.length;
     }
 
-    if (!tableDocument.tableLines.hasOwnProperty(targetLineNo)) {
+    if (!tableBlock.lines.hasOwnProperty(targetLineNo)) {
       return fileContent;
     }
 
-    tableDocument.tableLines[lineNo + 2] = this.valuesToLine(values);
+    tableBlock.lines[lineNo + 2] = this.valuesToLine(values);
 
     return tableDocument.toString();
   }
 
-  public modifyHeader(fileContent: string, values: LineValues): string {
-    return this.modifyLine(fileContent, -2, values);
+  public modifyHeader(
+    fileContent: string,
+    values: LineValues,
+    tableIndex: number = 0,
+  ): string {
+    return this.modifyLine(fileContent, -2, values, tableIndex);
   }
 
-  public removeLine(fileContent: string, lineNo: number): string {
+  public removeLine(
+    fileContent: string,
+    lineNo: number,
+    tableIndex: number = 0,
+  ): string {
     const tableDocument = new TableDocument(fileContent);
 
-    if (!tableDocument.foundTable) {
+    if (!tableDocument.hasTables()) {
+      return fileContent;
+    }
+
+    const tableBlock = tableDocument.getTable(tableIndex);
+
+    if (!tableBlock) {
       return fileContent;
     }
 
     let targetLineNo = lineNo + 2;
     // Line number -1 is to be considered "last line"
     if (lineNo === -1) {
-      targetLineNo = tableDocument.tableLines.length;
+      targetLineNo = tableBlock.lines.length;
     }
 
-    tableDocument.tableLines.splice(targetLineNo, 1);
+    tableBlock.lines.splice(targetLineNo, 1);
 
     return tableDocument.toString();
   }
 
-  public readLine(fileContent: string, lineNo: number): LineValues | null {
+  public readLine(
+    fileContent: string,
+    lineNo: number,
+    tableIndex: number = 0,
+  ): LineValues | null {
     const tableDocument = new TableDocument(fileContent);
 
-    if (!tableDocument.foundTable) {
+    if (!tableDocument.hasTables()) {
+      return null;
+    }
+
+    const tableBlock = tableDocument.getTable(tableIndex);
+
+    if (!tableBlock) {
       return null;
     }
 
     let targetLineNo = lineNo + 2;
     // Line number -1 is to be considered "last line"
     if (lineNo === -1) {
-      targetLineNo = tableDocument.tableLines.length;
+      targetLineNo = tableBlock.lines.length;
     }
 
-    const line = tableDocument.tableLines.at(targetLineNo);
+    const line = tableBlock.lines.at(targetLineNo);
 
     if (line) {
       return this.lineToValues(line);
@@ -174,14 +215,23 @@ export class TableManager {
     return null;
   }
 
-  public readTableLines(fileContent: string): LineValues[] | null {
+  public readTableLines(
+    fileContent: string,
+    tableIndex: number = 0,
+  ): LineValues[] | null {
     const tableDocument = new TableDocument(fileContent);
 
-    if (!tableDocument.foundTable) {
+    if (!tableDocument.hasTables()) {
       return null;
     }
 
-    return tableDocument.tableLines.map((l) => this.lineToValues(l));
+    const tableBlock = tableDocument.getTable(tableIndex);
+
+    if (!tableBlock) {
+      return null;
+    }
+
+    return tableBlock.lines.map((l) => this.lineToValues(l));
   }
 
   private valuesToLine(values: LineValues): string {

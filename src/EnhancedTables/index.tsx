@@ -13,12 +13,14 @@ type EnhancedTablesProps = {
   app: App;
   configuration: EtConfiguration;
   tableData: RawTableData;
+  indexOfTheEnhancedTable: number;
 };
 
 export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
   app,
   configuration,
   tableData,
+  indexOfTheEnhancedTable,
 }) => {
   const tbodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -35,7 +37,12 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
 
     sorting,
     setSorting,
-  } = useEnhancedTablesState(app, configuration, tableData);
+  } = useEnhancedTablesState(
+    app,
+    configuration,
+    indexOfTheEnhancedTable,
+    tableData,
+  );
 
   // Escape from React logic in order to be abel to use `HTMLElement.appendChild()` and
   // hence handle advanced formatters that return HTML elements
@@ -81,6 +88,7 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
               currentContent,
               row.index,
               modifiedRowValues,
+              indexOfTheEnhancedTable,
             );
 
             // Set the modified data
