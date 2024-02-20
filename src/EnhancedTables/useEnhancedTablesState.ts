@@ -44,6 +44,8 @@ export function useEnhancedTablesState(
   const [filtering, setFiltering] = useState<string | null>(
     configuration.filter ?? null,
   );
+  const [searching, setSearching] = useState<string | null>(null);
+
   const [pagination, setPagination] = useState<Pagination | null>(() => {
     if (configuration.pagination) {
       const pageSize =
@@ -197,11 +199,26 @@ export function useEnhancedTablesState(
     }
 
     // Filtering
-    if (filtering) {
+    if (filtering && !searching) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const $data = tableData;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       rows = rows.filter(($row) => eval(filtering));
+    }
+
+    // Searching
+    if (searching) {
+      const lowercaseSearching = searching.toLowerCase();
+
+      rows = rows.filter((r) => {
+        try {
+          return r.orderedCells
+            .filter((c) => c.column.searchable)
+            .some((c) => c.value.toLocaleString().includes(lowercaseSearching));
+        } catch (e) {
+          return false;
+        }
+      });
     }
 
     setTotalNumberOfUnpaginatedRows(rows.length);
@@ -216,6 +233,8 @@ export function useEnhancedTablesState(
 
     return rows;
   }, [
+    indexOfTheEnhancedTable,
+    searching,
     configuration,
     tableData,
     sorting,
@@ -238,5 +257,8 @@ export function useEnhancedTablesState(
 
     sorting,
     setSorting,
+
+    searching,
+    setSearching,
   };
 }

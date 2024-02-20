@@ -50,6 +50,7 @@ export type EtConfigurationColumn = {
   'no-format'?: string;
   hidden?: boolean;
   nowrap?: boolean;
+  searchable?: boolean;
 };
 
 // Data

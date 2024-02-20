@@ -1,5 +1,3 @@
-import { isBlockScopeBoundary } from 'tsutils';
-
 const SUB_HEADER_LINE_REGEX = /^\|\s*-[-\s|]*?-\s*\|$/gm;
 const LINE_REGEX = /^\|.*?\|$/gm;
 

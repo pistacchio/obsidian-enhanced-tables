@@ -20,6 +20,8 @@ type ControlsViewProps = {
   setFiltering: Dispatch<SetStateAction<string | null>>;
   sorting: string | null;
   setSorting: Dispatch<SetStateAction<string | null>>;
+  searching: string | null;
+  setSearching: Dispatch<SetStateAction<string | null>>;
 };
 
 export const ControlsView: React.FC<ControlsViewProps> = ({
@@ -29,6 +31,8 @@ export const ControlsView: React.FC<ControlsViewProps> = ({
   setFiltering,
   sorting,
   setSorting,
+  searching,
+  setSearching,
 }) => {
   const [sortOrder, setSortOrder] = useState<string>(
     (sorting ?? '').startsWith('-') ? DESC : ASC,
@@ -48,6 +52,11 @@ export const ControlsView: React.FC<ControlsViewProps> = ({
         ...Object.entries(configuration.filters ?? {}),
       ] as FiltersConfiguration,
     [configuration.filter, configuration.filters],
+  );
+
+  const searchable = useMemo<boolean>(
+    () => columns.some((c) => c.searchable),
+    [columns],
   );
 
   useEffect(() => {
@@ -103,6 +112,19 @@ export const ControlsView: React.FC<ControlsViewProps> = ({
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+      )}
+
+      {searchable && (
+        <div className="searching">
+          <label>Search</label>
+          <div>
+            <input
+              type="text"
+              value={searching || ''}
+              onChange={(evt) => setSearching(evt.target.value || null)}
+            />
           </div>
         </div>
       )}

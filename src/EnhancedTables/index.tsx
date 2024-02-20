@@ -37,6 +37,9 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
 
     sorting,
     setSorting,
+
+    searching,
+    setSearching,
   } = useEnhancedTablesState(
     app,
     configuration,
@@ -111,7 +114,7 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
 
       tbodyRef.current!.appendChild(tr);
     });
-  }, [app.workspace, configuration, rows]);
+  }, [indexOfTheEnhancedTable, app.workspace, configuration, rows]);
 
   // If the user defined a custom make, try to make it scoped to the class
   // enhanced-tables
@@ -148,6 +151,8 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
           setFiltering={setFiltering}
           sorting={sorting}
           setSorting={setSorting}
+          searching={searching}
+          setSearching={setSearching}
         />
       )}
 

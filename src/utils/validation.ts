@@ -94,6 +94,9 @@ export const VALIDATION_JSON_SCHEMA = {
           editable: {
             type: 'boolean',
           },
+          searchable: {
+            type: 'boolean',
+          },
         },
         patternProperties: {
           '^type$': {

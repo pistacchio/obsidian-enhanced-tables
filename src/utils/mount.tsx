@@ -1,6 +1,7 @@
 import { App, MarkdownPostProcessorContext, parseYaml } from 'obsidian';
 import {
   ET_CONFIGURATION_CODE_ATTRIBUTE,
+  ET_CONFIGURATION_CODE_EL_ATTRIBUTE,
   ET_RENDER_TABLE_ATTRIBUTE,
   ET_YAML_SIGNAL,
 } from 'src/utils/sharedConstants';
@@ -82,10 +83,12 @@ export async function getMountContext(
 
       const tableData = extractRawTableData(tableEl);
 
+      yamlCodeEl.setAttribute(ET_CONFIGURATION_CODE_EL_ATTRIBUTE, '1');
+
       // If there are multiple Enhanced Tables declared in the page, found out if this
       // is the first one, the second one and so on.
       const indexOfTheEnhancedTable = Array.from(
-        document.querySelectorAll('code'),
+        document.querySelectorAll(`[${ET_CONFIGURATION_CODE_EL_ATTRIBUTE}]`),
       ).indexOf(yamlCodeEl);
       element.setAttribute(ET_CONFIGURATION_CODE_ATTRIBUTE, '1');
 
