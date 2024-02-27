@@ -1,10 +1,10 @@
 {
   "id": "enhanced-tables",
   "name": "Enhanced tables",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "minAppVersion": "0.15.0",
   "description": "Add programmable controls to selected tables",
   "author": "pistacchio",
-  "authorUrl": "https://github.com/pistacchio/obsidian-enhanced-tables",
+  "authorUrl": "https://github.com/pistacchio",
   "isDesktopOnly": false
 }
