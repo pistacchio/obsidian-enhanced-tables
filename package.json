@@ -1,6 +1,6 @@
 {
   "name": "enhanced-tables",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Add programmable controls to selected tables",
   "main": "main.js",
   "scripts": {

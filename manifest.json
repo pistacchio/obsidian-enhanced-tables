@@ -1,7 +1,7 @@
 {
   "id": "enhanced-tables",
   "name": "Enhanced tables",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "minAppVersion": "0.15.0",
   "description": "Add programmable controls to selected tables",
   "author": "pistacchio",
