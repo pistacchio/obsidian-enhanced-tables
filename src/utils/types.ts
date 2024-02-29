@@ -1,6 +1,7 @@
 export type RawTableData = {
   columns: string[];
   rows: string[][];
+  rowDirections: (string | null)[];
 };
 
 export type CellValueFormatter = (cell: any, row: any, ctx: any) => any;

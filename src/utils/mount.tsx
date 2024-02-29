@@ -232,5 +232,19 @@ function extractRawTableData(element: HTMLTableElement): RawTableData {
     },
   );
 
-  return { columns, rows };
+  // Extract the alignment information from the source table in order to be able to
+  // apply it in the enhanced one
+
+  let rowDirections: (string | null)[] = Array.from(columns, () => null);
+
+  if (rows.length > 0) {
+    rowDirections = element
+      .find('tbody > tr')
+      ?.findAll('td')
+      .map((cell: HTMLTableCellElement) => cell.getAttr('align') ?? null);
+  }
+
+  console.log({ rowDirections });
+
+  return { columns, rows, rowDirections };
 }

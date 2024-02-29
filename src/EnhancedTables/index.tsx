@@ -68,8 +68,12 @@ export const EnhancedTables: React.FC<EnhancedTablesProps> = ({
         .filter((c) => !c.column.hidden)
         .forEach((cell, idx2) => {
           const td = document.createElement('td');
-          tr.setAttribute('data-et-cell', idx2.toString());
-          tr.setAttribute('data-et-row-cell', `${row.index}-${idx2}`);
+          td.setAttribute('data-et-cell', idx2.toString());
+          td.setAttribute('data-et-row-cell', `${row.index}-${idx2}`);
+
+          if (tableData.rowDirections[idx2] !== null) {
+            td.setAttribute('align', tableData.rowDirections[idx2] as string);
+          }
 
           if (cell.column.nowrap) {
             td.className = 'enhanced-tables-nowrap';
