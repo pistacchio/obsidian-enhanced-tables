@@ -244,7 +244,5 @@ function extractRawTableData(element: HTMLTableElement): RawTableData {
       .map((cell: HTMLTableCellElement) => cell.getAttr('align') ?? null);
   }
 
-  console.log({ rowDirections });
-
   return { columns, rows, rowDirections };
 }
