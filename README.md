@@ -94,7 +94,7 @@ hide-configuration: true
 </pre>
 
 <pre>
-| Id | Number column | Date       | Rating | Formatted    | Hidden             | Bool     |
+| Id | Number column | Date       | Rating | Formatted    | Hidden             | Boolean  |
 |----|---------------|------------|--------|--------------|--------------------| -------- |
 | 1  | 500           | 01-01-2024 | 2      | _**bold**_   | Text you won't see |          |
 | 2  | 1000          | 07-02-2024 | 5      |              |                    | no       |
