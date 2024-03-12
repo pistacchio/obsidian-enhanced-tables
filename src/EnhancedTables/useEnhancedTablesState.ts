@@ -208,13 +208,15 @@ export function useEnhancedTablesState(
 
     // Searching
     if (searching) {
-      const lowercaseSearching = searching.toLowerCase();
+      const lowercaseSearching = searching.toLocaleLowerCase();
 
       rows = rows.filter((r) => {
         try {
           return r.orderedCells
             .filter((c) => c.column.searchable)
-            .some((c) => c.value.toLocaleString().includes(lowercaseSearching));
+            .some((c) =>
+              c.value.toLocaleLowerCase().includes(lowercaseSearching),
+            );
         } catch (e) {
           return false;
         }
